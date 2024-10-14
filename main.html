@@ -25,57 +25,59 @@
         }
         .container {
             text-align: center;
-            background: rgba(0, 0, 0, 0.096);
-            padding: 30px;
+            background: rgba(0, 0, 0, 0.479); /* Make the background darker */
+            padding: 50px; /* Increase padding */
             border-radius: 30px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Stronger shadow */
             z-index: 1;
+            width: 500px; /* Double the width */
         }
         .title {
-            display: block;
-            margin: 10px 0;
-            padding: 10px;
-            background: #ffffff00;
+            font-size: 2em; /* Larger title */
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
         }
         .link {
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 10px 0;
-            padding: 10px;
+            padding: 15px; /* Increase padding */
             background: #00000042;
             color: white;
             text-decoration: none;
             border-radius: 10px;
-            transition: background 0.3s, box-shadow 0.3s;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
         }
         .link img {
             margin-right: 10px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%; /* Make the image circular */
+            width: 32px; /* Larger icons */
+            height: 32px;
+            border-radius: 50%;
         }
         .link:hover {
-    background: #00000098;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-    animation: glow 0.5s infinite alternate;
-    transform: scale(1.5); /* Increase the size */
-}
-
-@keyframes glow {
-                0% {
+            background: #00000098;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            animation: glow 3s infinite alternate;
+            transform: scale(1.1);
+        }
+        @keyframes glow {
+            0% {
                 box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-                filter: hue-rotate(0deg); /* Initial hue (red) */
-                }
-    100% {
-           box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-           filter: hue-rotate(360deg); /* Full rotation (changes hue) */
-         }
-                }
+                filter: hue-rotate(0deg);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+                filter: hue-rotate(360deg);
+            }
+        }
+        .small-text {
+            /*margin-top: 20px;*/
+            font-size: 1em;
+            color: white;
+            background: rgba(0, 0, 0, 0);
+            padding: 0px;
+            border-radius: 0px;
+        }
     </style>
 </head>
 <body>
@@ -84,8 +86,10 @@
         Your browser does not support the video tag.
     </video>
     <div class="container">
-        <img src="https://scontent-sin6-4.xx.fbcdn.net/v/t39.30808-6/340100685_242869148141993_7455233724421839500_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEB-iMxxIXs9XflEr9fdZq7MSL0NNC7z9MxIvQ00LvP0zX-zFxCTZVeakaGwxC8AvWRI8QYls4UcVcZUPR6uc-n&_nc_ohc=vLUzwBtF9xMQ7kNvgHAGmpA&_nc_zt=23&_nc_ht=scontent-sin6-4.xx&_nc_gid=Am72Uj-7AqXHSFnwUY5rqJ2&oh=00_AYBUYiLWX6rvLXqC2oHhMLXXb0MIuldLku5YS69DZe4pag&oe=6713214E" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
-        <h1 class="title">r3d1bruh</h1>
+        
+        <img src="https://scontent-sin6-4.xx.fbcdn.net/v/t39.30808-6/340100685_242869148141993_7455233724421839500_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEB-iMxxIXs9XflEr9fdZq7MSL0NNC7z9MxIvQ00LvP0zX-zFxCTZVeakaGwxC8AvWRI8QYls4UcVcZUPR6uc-n&_nc_ohc=vLUzwBtF9xMQ7kNvgHAGmpA&_nc_zt=23&_nc_ht=scontent-sin6-4.xx&_nc_gid=Am72Uj-7AqXHSFnwUY5rqJ2&oh=00_AYBUYiLWX6rvLXqC2oHhMLXXb0MIuldLku5YS69DZe4pag&oe=6713214E" alt="Logo" style="width: 100px; height: 100px; border-radius: 50%;">
+        <h1 class="title">@r3d1bruh</h1>
+        <div class="small-text">All of my active social medias are here lol</div><br>
         <a href="https://www.facebook.com/ridwanpradhan" class="link">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
             Facebook
@@ -103,8 +107,10 @@
             Discord
         </a>
         <a href="https://x.com/r3d1bruh" class="link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X (Twitter)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" alt="X (Twitter)">
             X (Twitter)
-        </a>
-            
-
+        </a><br>
+        <div class="small-text">NOW GET OUTTA HERE</div>
+    </div>
+</body>
+</html>
