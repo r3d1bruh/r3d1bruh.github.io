@@ -57,11 +57,25 @@
             margin-right: 10px;
             width: 24px;
             height: 24px;
+            border-radius: 50%; /* Make the image circular */
         }
         .link:hover {
-            background: #00000098;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-        }
+    background: #00000098;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+    animation: glow 0.5s infinite alternate;
+    transform: scale(1.5); /* Increase the size */
+}
+
+@keyframes glow {
+                0% {
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+                filter: hue-rotate(0deg); /* Initial hue (red) */
+                }
+    100% {
+           box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+           filter: hue-rotate(360deg); /* Full rotation (changes hue) */
+         }
+                }
     </style>
 </head>
 <body>
@@ -70,7 +84,7 @@
         Your browser does not support the video tag.
     </video>
     <div class="container">
-    
+        <img src="https://scontent-sin6-4.xx.fbcdn.net/v/t39.30808-6/340100685_242869148141993_7455233724421839500_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEB-iMxxIXs9XflEr9fdZq7MSL0NNC7z9MxIvQ00LvP0zX-zFxCTZVeakaGwxC8AvWRI8QYls4UcVcZUPR6uc-n&_nc_ohc=vLUzwBtF9xMQ7kNvgHAGmpA&_nc_zt=23&_nc_ht=scontent-sin6-4.xx&_nc_gid=Am72Uj-7AqXHSFnwUY5rqJ2&oh=00_AYBUYiLWX6rvLXqC2oHhMLXXb0MIuldLku5YS69DZe4pag&oe=6713214E" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
         <h1 class="title">r3d1bruh</h1>
         <a href="https://www.facebook.com/ridwanpradhan" class="link">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
@@ -92,7 +106,5 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X (Twitter)">
             X (Twitter)
         </a>
-        <!-- Add more links as needed -->
-    </div>
-</body>
-</html>
+            
+
