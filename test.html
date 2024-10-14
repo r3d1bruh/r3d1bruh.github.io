@@ -28,50 +28,71 @@
             background: rgba(255, 0, 0, 0.171); /* Make the background darker */
             padding: 50px; /* Increase padding */
             border-radius: 30px;
-            box-shadow: 0 0 20px rgb(0, 0, 0); /* Stronger shadow */
+            box-shadow: 0 0 20px rgb(255, 0, 0); /* Stronger shadow */
             z-index: 1;
-            width: 500px; /* Double the width */
+            width: 400px; /* Fixed width */
         }
         .title {
             font-size: 2em; /* Larger title */
             color: white;
         }
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust spacing between items */
+        }
         .link {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 10px 0;
+            margin: 1px 0;
             padding: 15px; /* Increase padding */
             background: #00000042;
             color: white;
             text-decoration: none;
             border-radius: 10px;
-            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s, margin-top 0.3s; /* Smooth transition for margin */
         }
         .link img {
             margin-right: 10px;
             width: 32px; /* Larger icons */
             height: 32px;
-            /*border-radius: 50%;*/
+            z-index: 1; /* Ensure image is above glow effect */
+        }
+        .link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 10px;
+            background: rgba(255, 0, 0, 0.308);
+            z-index: -1;
+            transition: transform 0.3s;
+        }
+        .link:hover::before {
+            animation: hueGlow 2s infinite alternate;
         }
         .link:hover {
-            background: #00000098;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-            animation: glow 3s infinite alternate;
             transform: scale(1.1);
         }
-        @keyframes glow {
+        .link:not(:hover) {
+            transform: scale(0.9);
+        }
+        .link:hover ~ .link {
+            margin-top: 15px; /* Add space when hovering */
+        }
+        @keyframes hueGlow {
             0% {
-                box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
                 filter: hue-rotate(0deg);
             }
             100% {
-                box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
                 filter: hue-rotate(360deg);
             }
         }
         .small-text {
-            /*margin-top: 20px;*/
             font-size: 1em;
             color: white;
             background: rgba(0, 0, 0, 0);
@@ -86,30 +107,31 @@
         Your browser does not support the video tag.
     </video>
     <div class="container">
-        
         <img src="https://scontent-sin6-4.xx.fbcdn.net/v/t39.30808-6/340100685_242869148141993_7455233724421839500_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEB-iMxxIXs9XflEr9fdZq7MSL0NNC7z9MxIvQ00LvP0zX-zFxCTZVeakaGwxC8AvWRI8QYls4UcVcZUPR6uc-n&_nc_ohc=vLUzwBtF9xMQ7kNvgHAGmpA&_nc_zt=23&_nc_ht=scontent-sin6-4.xx&_nc_gid=Am72Uj-7AqXHSFnwUY5rqJ2&oh=00_AYBUYiLWX6rvLXqC2oHhMLXXb0MIuldLku5YS69DZe4pag&oe=6713214E" alt="Logo" style="width: 100px; height: 100px; border-radius: 50%;">
         <h1 class="title">@r3d1bruh</h1>
         <div class="small-text">All of my active social medias are here lol</div><br>
-        <a href="https://www.facebook.com/ridwanpradhan" class="link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
-            Facebook
-        </a>
-        <a href="https://www.instagram.com/r3d1bruh" class="link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
-            Instagram
-        </a>
-        <a href="https://steamcommunity.com/id/r3d1bruh" class="link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" alt="Steam">
-            Steam
-        </a>
-        <a href="https://discord.com/users/r3d1bruh" class="link">
-            <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="Discord">
-            Discord
-        </a>
-        <a href="https://x.com/r3d1bruh" class="link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" alt="X (Twitter)">
-            X (Twitter)
-        </a><br>
+        <div class="links-container">
+            <a href="https://www.facebook.com/ridwanpradhan" class="link">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+                Facebook
+            </a>
+            <a href="https://www.instagram.com/r3d1bruh" class="link">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+                Instagram
+            </a>
+            <a href="https://steamcommunity.com/id/r3d1bruh" class="link">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" alt="Steam">
+                Steam
+            </a>
+            <a href="https://discord.com/users/r3d1bruh" class="link">
+                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="Discord">
+                Discord
+            </a>
+            <a href="https://x.com/r3d1bruh" class="link">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" alt="X (Twitter)">
+                X (Twitter)
+            </a>
+        </div>
         <div class="small-text">NOW GET OUTTA HERE</div>
     </div>
 </body>
