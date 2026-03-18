@@ -14,6 +14,11 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
+          cursor: none;
+        }
+        /* Always hide the native cursor (including link hover pointer) */
+        html, body, a, button, [role="button"], input, textarea, select, label {
+          cursor: none !important;
         }
         .background-video {
             position: absolute;
@@ -92,7 +97,7 @@
             justify-content: center;
             align-items: center;
             font-size: 2em;
-            cursor: pointer;
+          cursor: none;
             z-index: 9999;
             opacity: 1;
             transition: opacity 1s ease;
@@ -146,5 +151,6 @@
 
   <script src="titleEffects.js"></script>
   <script src="overlay.js"></script>
+  <script src="cursor.js"></script>
 </body>
 </html>
