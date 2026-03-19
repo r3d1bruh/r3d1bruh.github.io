@@ -200,10 +200,11 @@ iframe,
 }
 
 .internet-window {
-    max-width: 980px;
+    /* Keep the Linktree window compact by default (JS will further clamp to content). */
+    width: min(440px, calc(100% - 70px));
+    height: min(560px, calc(100% - 80px));
+    max-width: 440px;
     max-height: 720px;
-    width: calc(100% - 70px);
-    height: calc(100% - 80px);
 }
 
 .internet-window .internet-client {

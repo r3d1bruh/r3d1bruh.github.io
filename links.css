@@ -1,4 +1,4 @@
-/* links.css — 98.css glue + layout */
+/* links.css — XP.css glue + layout */
 
 html,
 body {
@@ -14,7 +14,7 @@ body.lt-links-page {
   background-repeat: no-repeat;
   overflow: hidden;
 
-  /* 98.css defaults are very small; bump readability for a link hub. */
+  /* Bump readability for a link hub. */
   font-size: 14px;
 }
 
@@ -193,11 +193,20 @@ body.lt-links-page {
 }
 
 .lt-links-panel {
+  background: #fff;
+  border: 1px solid #7f9db9;
+  padding: 2px;
+  box-sizing: border-box;
   height: 100%;
   min-height: 0;
   overflow-y: scroll; /* always show scrollbar */
   overflow-x: hidden;
   scrollbar-gutter: stable;
+}
+
+/* XP.css already styles `ul.tree-view`; avoid double borders when we provide the panel frame. */
+.lt-links-panel > ul.tree-view {
+  border: none;
 }
 
 .lt-links {
@@ -266,6 +275,13 @@ html.lt-embed .lt-wrap {
 html.lt-embed .lt-window {
   border: none;
   box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+html.lt-embed .lt-window .title-bar {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 html.lt-embed .lt-statusbar {

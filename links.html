@@ -8,8 +8,8 @@
 
   <meta name="color-scheme" content="light" />
 
-  <!-- 98.css (retro UI library) -->
-  <link rel="stylesheet" href="assets/vendor/98.css" />
+  <!-- XP.css (retro UI library) -->
+  <link rel="stylesheet" href="assets/vendor/xp.css" />
 
   <link rel="stylesheet" href="links.css" />
 
@@ -64,9 +64,21 @@
       // The parent listens and moves the Internet window accordingly.
       const titlebar = document.querySelector('.lt-titlebar');
       let dragging = false;
-      let dragLastX = 0;
-      let dragLastY = 0;
       let dragPointerId = null;
+
+      function getParentClientPoint(e) {
+        try {
+          const fe = window.frameElement;
+          if (fe && fe.getBoundingClientRect) {
+            const r = fe.getBoundingClientRect();
+            return { x: r.left + e.clientX, y: r.top + e.clientY };
+          }
+        } catch {
+          // ignore
+        }
+        return { x: e.clientX, y: e.clientY };
+      }
+
       function postDragMove(x, y) {
         if (!Number.isFinite(x) || !Number.isFinite(y)) return;
         try {
@@ -94,8 +106,6 @@
 
           dragging = true;
           dragPointerId = e.pointerId;
-          dragLastX = e.clientX;
-          dragLastY = e.clientY;
           try {
             titlebar.setPointerCapture(e.pointerId);
           } catch {
@@ -103,7 +113,8 @@
           }
 
           try {
-            parent.postMessage({ type: 'internet-drag-start', x: e.clientX, y: e.clientY }, '*');
+            const p = getParentClientPoint(e);
+            parent.postMessage({ type: 'internet-drag-start', x: p.x, y: p.y }, '*');
           } catch {
             // ignore
           }
@@ -113,12 +124,8 @@
 
         const onMove = (e) => {
           if (!dragging) return;
-          const nextX = e.clientX;
-          const nextY = e.clientY;
-            dragLastX = nextX;
-            dragLastY = nextY;
-
-          postDragMove(nextX, nextY);
+          const p = getParentClientPoint(e);
+          postDragMove(p.x, p.y);
           e.preventDefault();
         };
 

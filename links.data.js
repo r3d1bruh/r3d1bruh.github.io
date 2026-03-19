@@ -16,8 +16,7 @@
     profile: {
       handle: '@r3d1bruh',
       sub: 'All of my active social medias are here lol',
-      avatar:
-        'https://scontent-sin6-4.xx.fbcdn.net/v/t39.30808-6/340100685_242869148141993_7455233724421839500_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEB-iMxxIXs9XflEr9fdZq7MSL0NNC7z9MxIvQ00LvP0zX-zFxCTZVeakaGwxC8AvWRI8QYls4UcVcZUPR6uc-n&_nc_ohc=vLUzwBtF9xMQ7kNvgHAGmpA&_nc_zt=23&_nc_ht=scontent-sin6-4.xx&_nc_gid=Am72Uj-7AqXHSFnwUY5rqJ2&oh=00_AYBUYiLWX6rvLXqC2oHhMLXXb0MIuldLku5YS69DZe4pag&oe=6713214E',
+      avatar: 'assets/pfp.webp',
     },
 
     links: [

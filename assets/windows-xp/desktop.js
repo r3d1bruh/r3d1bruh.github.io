@@ -253,14 +253,11 @@ function closeAudio() {
 
 function toggleInternetMinimize() {
     if (!internetWindow) return
-    if (internetWindow.style.display === "none") {
+    if (internetWindow.style.display === "none" || window.getComputedStyle(internetWindow).display === "none") {
         openInternet()
         return
     }
-    internetWindow.classList.toggle("minimized")
-    const isMin = internetWindow.classList.contains("minimized")
-    setTabActive(!isMin)
-    if (!isMin) bringToFront(internetWindow)
+    toggleMinimize(internetWindow, internetTab)
 }
 
 function closeInternet() {
@@ -273,8 +270,7 @@ function closeInternet() {
 
 function toggleInternetMaximize() {
     if (!internetWindow) return
-    internetWindow.classList.toggle("maximized")
-    bringToFront(internetWindow)
+    toggleMaximize(internetWindow)
 }
 
 if (internetTab) {
@@ -331,19 +327,15 @@ window.addEventListener("message", (evt) => {
         bringToFront(internetWindow)
         normalizeWindow(internetWindow)
 
-        const frameEl = internetWindow.querySelector(".internet-frame")
-        const frameRect = frameEl ? frameEl.getBoundingClientRect() : null
+        const globalX = typeof data.x === "number" ? data.x : NaN
+        const globalY = typeof data.y === "number" ? data.y : NaN
+        if (!Number.isFinite(globalX) || !Number.isFinite(globalY)) return
+
         const winRect = internetWindow.getBoundingClientRect()
 
-        const localX = typeof data.x === "number" ? data.x : 0
-        const localY = typeof data.y === "number" ? data.y : 0
-        const globalX = (frameRect ? frameRect.left : 0) + localX
-        const globalY = (frameRect ? frameRect.top : 0) + localY
-
         internetIframeDrag = {
-            frameEl,
-            lastLocalX: localX,
-            lastLocalY: localY,
+            lastClientX: globalX,
+            lastClientY: globalY,
             grabOffsetX: globalX - winRect.left,
             grabOffsetY: globalY - winRect.top,
             rafPending: false,
@@ -355,30 +347,25 @@ window.addEventListener("message", (evt) => {
         if (!internetWindow) return
         if (internetWindow.classList.contains("maximized")) return
 
+        const globalX = typeof data.x === "number" ? data.x : NaN
+        const globalY = typeof data.y === "number" ? data.y : NaN
+        if (!Number.isFinite(globalX) || !Number.isFinite(globalY)) return
+
         if (!internetIframeDrag) {
-            // If we missed start, approximate a start at current window position.
+            // If we missed start, approximate a start using current window bounds.
             normalizeWindow(internetWindow)
             const winRect = internetWindow.getBoundingClientRect()
             internetIframeDrag = {
-                iframeLeft: 0,
-                iframeTop: 0,
-                lastClientX: winRect.left,
-                lastClientY: winRect.top,
-                grabOffsetX: 0,
-                grabOffsetY: 0,
-                width: winRect.width,
-                height: winRect.height,
-                area: getWorkArea(),
+                lastClientX: globalX,
+                lastClientY: globalY,
+                grabOffsetX: globalX - winRect.left,
+                grabOffsetY: globalY - winRect.top,
                 rafPending: false,
             }
         }
 
-        const localX = typeof data.x === "number" ? data.x : 0
-        const localY = typeof data.y === "number" ? data.y : 0
-        if (!Number.isFinite(localX) || !Number.isFinite(localY)) return
-
-        internetIframeDrag.lastLocalX = localX
-        internetIframeDrag.lastLocalY = localY
+        internetIframeDrag.lastClientX = globalX
+        internetIframeDrag.lastClientY = globalY
 
         if (!internetIframeDrag.rafPending) {
             internetIframeDrag.rafPending = true
@@ -387,24 +374,15 @@ window.addEventListener("message", (evt) => {
                 internetIframeDrag.rafPending = false
                 if (internetWindow.classList.contains("maximized")) return
 
-                // Recompute iframe rect each frame so the global cursor coords stay correct
-                // as the window moves (this is the key to "sticking" to the cursor).
-                const frameRect = internetIframeDrag.frameEl
-                    ? internetIframeDrag.frameEl.getBoundingClientRect()
-                    : null
-                const globalX = (frameRect ? frameRect.left : 0) + internetIframeDrag.lastLocalX
-                const globalY = (frameRect ? frameRect.top : 0) + internetIframeDrag.lastLocalY
-
                 const winRect = internetWindow.getBoundingClientRect()
                 const area = getWorkArea()
 
-                const desiredLeft = globalX - internetIframeDrag.grabOffsetX
-                const desiredTop = globalY - internetIframeDrag.grabOffsetY
+                const desiredLeft = internetIframeDrag.lastClientX - internetIframeDrag.grabOffsetX
+                const desiredTop = internetIframeDrag.lastClientY - internetIframeDrag.grabOffsetY
 
                 const clampedLeft = clamp(desiredLeft, area.left, area.right - winRect.width)
                 const clampedTop = clamp(desiredTop, area.top, area.bottom - winRect.height)
 
-                // Match Notepad logic: don't round; let sub-pixel positioning be smooth.
                 internetWindow.style.left = clampedLeft + "px"
                 internetWindow.style.top = clampedTop + "px"
             })
@@ -419,8 +397,11 @@ window.addEventListener("message", (evt) => {
 
     if (data.type === "internet-set-max-size") {
         if (!internetWindow) return
+        const wasSized = internetWindow.dataset.__contentSized === "1"
         const maxClientH = typeof data.maxClientH === "number" ? data.maxClientH : null
         const maxClientW = typeof data.maxClientW === "number" ? data.maxClientW : null
+        const preferredClientH = typeof data.preferredClientH === "number" ? data.preferredClientH : null
+        const preferredClientW = typeof data.preferredClientW === "number" ? data.preferredClientW : null
 
         // The Internet window's titlebar is ~25px (see desktop.css calc(100% - 25px)).
         const CHROME_H = 25
@@ -431,6 +412,46 @@ window.addEventListener("message", (evt) => {
         }
         if (Number.isFinite(maxClientW) && maxClientW > 0) {
             internetWindow.style.maxWidth = Math.round(maxClientW + CHROME_W) + "px"
+        }
+
+        // Shrink-to-fit (never grow) so the window doesn't start huge
+        // and can't be resized into empty space.
+        try {
+            if (!internetWindow.classList.contains("maximized")) {
+                const targetOuterH =
+                    Number.isFinite(preferredClientH) && preferredClientH > 0 ? preferredClientH + CHROME_H : null
+                const targetOuterW =
+                    Number.isFinite(preferredClientW) && preferredClientW > 0 ? preferredClientW + CHROME_W : null
+
+                const rect = internetWindow.getBoundingClientRect()
+
+                if (Number.isFinite(targetOuterW) && targetOuterW > 0) {
+                    if (!internetWindow.dataset.__contentSized || rect.width - targetOuterW > 6) {
+                        internetWindow.style.width = Math.round(targetOuterW) + "px"
+                    }
+                }
+                if (Number.isFinite(targetOuterH) && targetOuterH > 0) {
+                    if (!internetWindow.dataset.__contentSized || rect.height - targetOuterH > 6) {
+                        internetWindow.style.height = Math.round(targetOuterH) + "px"
+                    }
+                }
+
+                if (targetOuterW || targetOuterH) {
+                    internetWindow.dataset.__contentSized = "1"
+                }
+            }
+        } catch {
+            // ignore
+        }
+
+        // After the first shrink-to-fit, re-center so it's centered horizontally too.
+        try {
+            if (!wasSized && internetWindow.dataset.__contentSized === "1") {
+                centerWindowToWorkArea(internetWindow)
+                internetWindow.dataset.__contentCentered = "1"
+            }
+        } catch {
+            // ignore
         }
         clampWindowToWorkArea(internetWindow)
     }
@@ -708,9 +729,13 @@ function wireResize(win) {
             // ignore
         }
 
-        // Remove the default CSS max constraints once the user manually resizes.
-        win.style.maxWidth = "none"
-        win.style.maxHeight = "none"
+        // Remove the default CSS max constraints once the user manually resizes,
+        // except for the Internet (Linktree) window where we intentionally clamp
+        // to content to avoid empty space.
+        if (!win.classList.contains("internet-window")) {
+            win.style.maxWidth = "none"
+            win.style.maxHeight = "none"
+        }
 
         win.style.left = Math.round(nextLeft) + "px"
         win.style.top = Math.round(nextTop) + "px"
