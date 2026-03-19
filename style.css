@@ -1,39 +1,310 @@
 /* style.css */
 
-/* Apply a custom cursor to the whole page */
+:root {
+  --lt-bg: rgba(0, 0, 0, 0.48);
+  --lt-window: rgba(15, 15, 18, 0.62);
+  --lt-window-border: rgba(255, 255, 255, 0.18);
+  --lt-text: rgba(255, 255, 255, 0.92);
+  --lt-muted: rgba(255, 255, 255, 0.70);
+  --lt-glow: rgba(255, 0, 70, 0.45);
+}
+
+html,
 body {
-    /* Replace cursor.png with your own image file */
-    cursor: url('cursor.png') 4 4, auto;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
+  height: 100%;
+}
+
+/* Always hide the native cursor (cursor.js renders the custom one) */
+html,
+body,
+a,
+button,
+[role='button'],
+input,
+textarea,
+select,
+label {
+  cursor: none !important;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Linktree redesign */
+.lt-wrap {
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100vw - 40px));
+}
+
+.lt-window {
+  position: relative;
+  text-align: left;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--lt-window);
+  border: 1px solid var(--lt-window-border);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.65), 0 0 40px var(--lt-glow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 0;
+}
+
+.lt-window::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.032) 0px,
+      rgba(255, 255, 255, 0.032) 1px,
+      rgba(0, 0, 0, 0) 3px,
+      rgba(0, 0, 0, 0) 6px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.65;
+}
+
+.lt-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lt-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lt-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+.lt-dot-red {
+  background: #ff4b4b;
+}
+
+.lt-dot-yellow {
+  background: #ffd24b;
+}
+
+.lt-dot-green {
+  background: #3cff84;
+}
+
+.lt-filename {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lt-titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.lt-profile {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 14px;
+  padding: 18px 18px 6px 18px;
+  align-items: center;
+}
+
+.lt-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.lt-profile-text {
+  min-width: 0;
+}
+
+.lt-handle {
+  margin: 0;
+  color: var(--lt-text);
+  font-size: 2rem;
+  line-height: 1.05;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+}
+
+.lt-sub {
+  margin-top: 6px;
+  color: var(--lt-muted);
+  font-size: 1rem;
+}
+
+.lt-links {
+  padding: 14px 18px 18px 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.lt-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 14px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.94);
+  background:
+    radial-gradient(120% 140% at 10% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(0, 0, 0, 0) 70%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.10), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.30);
+  transition: transform 160ms ease, box-shadow 200ms ease, border-color 200ms ease, filter 200ms ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.lt-link::after {
+  content: '';
+  position: absolute;
+  inset: -40% -60%;
+  transform: rotate(14deg) translateX(-42%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 40%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  transition: opacity 200ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lt-link:hover {
+  transform: translateY(-2px) scale(1.012);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42), 0 0 28px rgba(255, 0, 80, 0.22);
+  filter: saturate(1.12);
+}
+
+.lt-link:hover::after {
+  opacity: 1;
+  transform: rotate(14deg) translateX(18%);
+}
+
+.lt-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}
+
+.lt-link-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lt-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.lt-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lt-label {
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lt-note {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.68);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lt-link-right {
+  font-size: 1.4rem;
+  opacity: 0.82;
+  transform: translateX(-2px);
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.lt-link:hover .lt-link-right {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.lt-footer {
+  padding: 10px 18px 18px 18px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.45px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-link,
+  .lt-link::after,
+  #overlay,
+  #overlay h2 {
+    transition: none !important;
+    animation: none !important;
   }
-  
-  /* Example: different cursor when hovering links */
-  a {
-    cursor: url('link-cursor.png') 4 4, pointer;
-    color: #007acc;
-    text-decoration: none;
+
+  .lt-link:hover {
+    transform: none;
   }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Example: custom cursor for buttons */
-  button {
-    cursor: url('button-cursor.png') 4 4, pointer;
-    background-color: #007acc;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 4px;
-  }
-  
-  button:hover {
-    background-color: #005fa3;
-  }
+}
 
 /* Overlay styling */
 #overlay {
@@ -48,7 +319,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 2em;
-  cursor: pointer;
+  cursor: none;
   z-index: 9999;
   opacity: 1; /* start fully visible */
   transition: opacity 1s ease; /* smooth fade */

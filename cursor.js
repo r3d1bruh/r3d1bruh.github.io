@@ -14,12 +14,12 @@ const EMIT_OFFSET_Y = 0;
 
 // Particle tuning
 const MAX_PARTICLES = 260;
-const LIFE_MIN = 0.35; // seconds
-const LIFE_MAX = 0.65; // seconds
-const SIZE_MIN = 4; // px
-const SIZE_MAX = 10; // px
+const LIFE_MIN = 0.525; // seconds
+const LIFE_MAX = 0.975; // seconds
+const SIZE_MIN = 1.125; // px
+const SIZE_MAX = 1.125; // px
 const DRAG = 0.90; // velocity drag per frame-ish (dt-scaled)
-const SPEED_SPREAD = 0.18; // how much mouse speed affects particle spray
+const SPEED_SPREAD = 0.135; // how much mouse speed affects particle spray
 
 // Spawn tuning (continuous + seamless): spawn based on distance moved.
 const PARTICLES_PER_PX = 0.18; // particles per pixel traveled
@@ -58,7 +58,7 @@ cursorEl.style.cssText = `
   background-size: contain;
   background-repeat: no-repeat;
   pointer-events: none;
-  z-index: 10000;
+  z-index: 20000;
   transform: translate3d(-9999px, -9999px, 0);
   will-change: transform;
   display: none;
@@ -75,7 +75,7 @@ canvas.style.cssText = `
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 19999;
   display: none;
 `;
 document.body.appendChild(canvas);
@@ -197,8 +197,8 @@ function animate(ts) {
   lastTs = ts;
 
   if (visible) {
-    // Cursor position (centered on mouse)
-    cursorEl.style.transform = `translate3d(${(mouseX - EMIT_OFFSET_X) - CURSOR_HALF}px, ${(mouseY - EMIT_OFFSET_Y) - CURSOR_HALF}px, 0)`;
+    // Cursor position (upper-left at mouse)
+    cursorEl.style.transform = `translate3d(${(mouseX - EMIT_OFFSET_X)}px, ${(mouseY - EMIT_OFFSET_Y)}px, 0)`;
 
     // Mouse velocity + distance
     mouseVX = (mouseX - prevMouseX) / Math.max(dt, 1e-6);
