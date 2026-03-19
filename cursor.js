@@ -4,8 +4,8 @@
 const CURSOR_SIZE = 48;
 const CURSOR_HALF = CURSOR_SIZE / 2;
 
-const CURSOR_NORMAL_URL = 'assets/cursor.gif';
-const CURSOR_REVERSED_URL = 'assets/cursor-reversed.gif';
+const CURSOR_NORMAL_URL = window.__CURSOR_NORMAL_URL || 'assets/cursor.gif';
+const CURSOR_REVERSED_URL = window.__CURSOR_REVERSED_URL || 'assets/cursor-reversed.gif';
 
 // Emit particles from the mouse position (0,0). If you want the trail
 // to come from a specific "tip" on your GIF, tweak these.
@@ -107,6 +107,8 @@ let lastTs = performance.now();
 let distanceAccumulator = 0;
 let hueBase = 0;
 
+let hoveringLinkFromMessage = false;
+
 const particles = [];
 
 function rand(min, max) {
@@ -162,6 +164,38 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
+// During pointer-capture drags (e.g. window dragging), browsers may stop firing
+// `mousemove` on the document. Track pointer movement too so the custom cursor
+// keeps updating.
+document.addEventListener(
+  'pointermove',
+  (e) => {
+    mouseX = e.clientX + EMIT_OFFSET_X;
+    mouseY = e.clientY + EMIT_OFFSET_Y;
+
+    if (!visible) {
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+      showFX();
+    }
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  'pointerdown',
+  (e) => {
+    mouseX = e.clientX + EMIT_OFFSET_X;
+    mouseY = e.clientY + EMIT_OFFSET_Y;
+    if (!visible) {
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+      showFX();
+    }
+  },
+  { passive: true }
+);
+
 document.addEventListener('mouseleave', hideFX);
 
 // Reverse cursor when hovering links
@@ -176,6 +210,73 @@ document.addEventListener('mouseout', (e) => {
     setCursorImage(CURSOR_NORMAL_URL);
   }
 });
+
+// Support embedded iframes (e.g. linktree inside the XP desktop):
+// The iframe forwards pointer move/hover/click to the parent so the cursor stays smooth.
+window.addEventListener('message', (evt) => {
+  const data = evt && evt.data;
+  if (!data || typeof data !== 'object') return;
+
+  if (data.type === 'cursor-move') {
+    if (typeof data.x === 'number' && typeof data.y === 'number') {
+      mouseX = data.x + EMIT_OFFSET_X;
+      mouseY = data.y + EMIT_OFFSET_Y;
+      if (!visible) {
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+        showFX();
+      }
+    }
+
+    if (typeof data.hoverLink === 'boolean' && data.hoverLink !== hoveringLinkFromMessage) {
+      hoveringLinkFromMessage = data.hoverLink;
+      setCursorImage(hoveringLinkFromMessage ? CURSOR_REVERSED_URL : CURSOR_NORMAL_URL);
+    }
+  }
+
+  if (data.type === 'cursor-click') {
+    if (typeof data.x === 'number' && typeof data.y === 'number') {
+      addClickBurst(data.x + EMIT_OFFSET_X, data.y + EMIT_OFFSET_Y);
+    }
+  }
+});
+
+// Click event: spawn particles in a uniform 360-degree ring
+document.addEventListener('click', (e) => {
+  addClickBurst(e.clientX + EMIT_OFFSET_X, e.clientY + EMIT_OFFSET_Y);
+});
+
+// Disable right-click and spawn the same burst effect
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  // Use client coordinates like the left-click handler
+  addClickBurst(e.clientX + EMIT_OFFSET_X, e.clientY + EMIT_OFFSET_Y);
+});
+
+function addClickBurst(x, y) {
+  const particleCount = 36; // Evenly distributed around 360°
+  const burstSpeed = 220; // Speed outward from click point
+
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (i / particleCount) * Math.PI * 2; // Perfect 360° distribution
+    const hue = (hueBase + i * 10) % 360;
+
+    if (particles.length >= MAX_PARTICLES) {
+      particles.shift();
+    }
+
+    particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * burstSpeed,
+      vy: Math.sin(angle) * burstSpeed,
+      age: 0,
+      life: rand(LIFE_MIN, LIFE_MAX),
+      size: rand(SIZE_MIN, SIZE_MAX),
+      hue,
+    });
+  }
+}
 
 function drawParticle(p, alpha) {
   const r = p.size;

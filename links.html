@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internet</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+  <meta name="color-scheme" content="light" />
+
+  <!-- 98.css (retro UI library) -->
+  <link rel="stylesheet" href="assets/vendor/98.css" />
+
+  <link rel="stylesheet" href="links.css" />
+
+  <script>
+    // Embedded inside the XP desktop: fit the iframe.
+    window.__LT_EMBED = new URLSearchParams(location.search).get('embed') === '1';
+    if (window.__LT_EMBED) document.documentElement.classList.add('lt-embed');
+  </script>
+</head>
+
+<body class="lt-links-page">
+  <div class="lt-wrap" data-resize="se" role="application" aria-label="Social link hub window">
+    <div class="window lt-window" role="main" aria-label="Social link hub">
+      <div class="title-bar lt-titlebar" aria-label="Window titlebar">
+        <div class="title-bar-text">Internet</div>
+        <div class="title-bar-controls" aria-label="Window controls">
+          <button aria-label="Minimize" type="button"></button>
+          <button aria-label="Close" type="button"></button>
+        </div>
+      </div>
+
+      <div class="window-body lt-body" aria-label="Window contents">
+        <div class="lt-profile">
+          <img id="lt-avatar" class="lt-avatar" alt="Profile picture" />
+          <div class="lt-profile-text">
+            <h1 id="lt-handle" class="lt-handle"></h1>
+            <div id="lt-sub" class="lt-sub"></div>
+          </div>
+        </div>
+
+        <fieldset class="lt-group" aria-label="Links">
+          <legend>Links</legend>
+          <div class="sunken-panel lt-links-panel">
+            <ul id="linktree" class="tree-view lt-links"></ul>
+          </div>
+        </fieldset>
+
+        <div class="status-bar lt-statusbar" aria-label="Status bar">
+          <p class="status-bar-field">Internet</p>
+          <p class="status-bar-field">Ready</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="links.data.js"></script>
+  <script src="links.js"></script>
+
+  <script>
+    if (window.__LT_EMBED) {
+      // Bridge dragging from inside the iframe to the parent XP window.
+      // The parent listens and moves the Internet window accordingly.
+      const titlebar = document.querySelector('.lt-titlebar');
+      let dragging = false;
+      let dragLastX = 0;
+      let dragLastY = 0;
+      let dragPointerId = null;
+      function postDragMove(x, y) {
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        try {
+          parent.postMessage({ type: 'internet-drag-move', x, y }, '*');
+        } catch {
+          // ignore
+        }
+      }
+
+      function dragEnd() {
+        if (!dragging) return;
+        dragging = false;
+        dragPointerId = null;
+        try {
+          parent.postMessage({ type: 'internet-drag-end' }, '*');
+        } catch {
+          // ignore
+        }
+      }
+
+      if (titlebar) {
+        titlebar.addEventListener('pointerdown', (e) => {
+          if (e.button !== 0) return;
+          if (e.target && e.target.closest && e.target.closest('.title-bar-controls')) return;
+
+          dragging = true;
+          dragPointerId = e.pointerId;
+          dragLastX = e.clientX;
+          dragLastY = e.clientY;
+          try {
+            titlebar.setPointerCapture(e.pointerId);
+          } catch {
+            // ignore
+          }
+
+          try {
+            parent.postMessage({ type: 'internet-drag-start', x: e.clientX, y: e.clientY }, '*');
+          } catch {
+            // ignore
+          }
+
+          e.preventDefault();
+        });
+
+        const onMove = (e) => {
+          if (!dragging) return;
+          const nextX = e.clientX;
+          const nextY = e.clientY;
+            dragLastX = nextX;
+            dragLastY = nextY;
+
+          postDragMove(nextX, nextY);
+          e.preventDefault();
+        };
+
+        titlebar.addEventListener('pointermove', onMove);
+
+        titlebar.addEventListener('pointerup', (e) => {
+          if (dragPointerId != null) {
+            try {
+              titlebar.releasePointerCapture(dragPointerId);
+            } catch {
+              // ignore
+            }
+          }
+          dragEnd();
+        });
+
+        titlebar.addEventListener('pointercancel', () => {
+          if (dragPointerId != null) {
+            try {
+              titlebar.releasePointerCapture(dragPointerId);
+            } catch {
+              // ignore
+            }
+          }
+          dragEnd();
+        });
+      }
+
+      const minBtn = document.querySelector('.title-bar-controls button[aria-label="Minimize"]');
+
+      if (minBtn) {
+        minBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            parent.postMessage({ type: 'internet-minimize' }, '*');
+          } catch {
+            // ignore
+          }
+        });
+      }
+
+      // Allow closing the parent "Internet" window from inside the iframe.
+      // (This is the "ribbon" the desktop embed otherwise lacks.)
+      const closeBtn = document.querySelector(
+        '.title-bar-controls button[aria-label="Close"]'
+      );
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            parent.postMessage({ type: 'internet-close' }, '*');
+          } catch {
+            // ignore
+          }
+        });
+      }
+
+      // Forward pointer events to the parent so the desktop's custom cursor stays responsive.
+      const sendMove = (e) => {
+        try {
+          const frame = window.frameElement;
+          if (!frame) return;
+          const rect = frame.getBoundingClientRect();
+          const hoverLink = !!(e.target && e.target.closest && e.target.closest('a'));
+          parent.postMessage(
+            {
+              type: 'cursor-move',
+              x: rect.left + e.clientX,
+              y: rect.top + e.clientY,
+              hoverLink,
+            },
+            '*'
+          );
+        } catch {
+          // ignore
+        }
+      };
+
+      document.addEventListener('pointermove', sendMove, { passive: true });
+      document.addEventListener(
+        'click',
+        (e) => {
+          try {
+            const frame = window.frameElement;
+            if (!frame) return;
+            const rect = frame.getBoundingClientRect();
+            parent.postMessage(
+              {
+                type: 'cursor-click',
+                x: rect.left + e.clientX,
+                y: rect.top + e.clientY,
+              },
+              '*'
+            );
+          } catch {
+            // ignore
+          }
+        },
+        true
+      );
+    } else {
+      const s1 = document.createElement('script');
+      s1.src = 'draggableWindow.js';
+      document.body.appendChild(s1);
+    }
+  </script>
+</body>
+</html>

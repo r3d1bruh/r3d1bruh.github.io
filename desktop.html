@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <link rel="stylesheet" type="text/css" href="assets/windows-xp/index.css">
+    <link rel="stylesheet" type="text/css" href="assets/windows-xp/desktop.css">
+</head>
+
+<body>
+    <video autoplay muted loop playsinline id="desktop-bg-video" class="desktop-background-video">
+        <source src="assets/bg0.mp4" type="video/mp4">
+    </video>
+
+    <div class="desktop">
+        <div class="icon faisal-akhtar">
+            <img src="assets/windows-xp/documents.png">
+            <div class="icon-name">r3d1bruh</div>
+        </div>
+        <div class="icon internet">
+            <img src="assets/windows-xp/ie.png">
+            <div class="icon-name">Internet</div>
+        </div>
+        <div class="icon my-computer">
+            <img src="assets/windows-xp/computer.png">
+            <div class="icon-name">My Computer</div>
+        </div>
+        <div class="icon my-network">
+            <img src="assets/windows-xp/network.png">
+            <div class="icon-name">My Network</div>
+        </div>
+        <div class="icon note-pad">
+            <img src="assets/windows-xp/notepad.png">
+            <div class="icon-name">ReadME.txt</div>
+        </div>
+        <div class="icon recycle-bin">
+            <img src="assets/windows-xp/recycle.png">
+            <div class="icon-name">Recycle Bin</div>
+        </div>
+    </div>
+
+    <div class="window" style="display:none;">
+        <div class="title-bar">
+            <div><img src="assets/windows-xp/notepad.png"> ReadME.txt</div>
+            <div class="controls">
+                <button class="cls"></button>
+                <button class="max"></button>
+                <button class="min"></button>
+            </div>
+        </div>
+        <div class="menu-bar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>Format</span>
+            <span>View</span>
+            <span>Help</span>
+        </div>
+        <textarea></textarea>
+    </div>
+
+    <div class="window internet-window" style="display:none;">
+        <div class="title-bar internet-title-bar">
+            <div><img src="assets/windows-xp/ie.png"> Internet</div>
+            <div class="controls">
+                <button class="internet-cls cls"></button>
+                <button class="internet-max max"></button>
+                <button class="internet-min min"></button>
+            </div>
+        </div>
+        <div class="internet-client">
+            <iframe class="internet-frame" src="links.html?embed=1" title="Internet"></iframe>
+        </div>
+    </div>
+
+    <div class="window audio-window" style="display:none;">
+        <div class="title-bar audio-title-bar">
+            <div><img src="assets/windows-xp/file.png"> Audio</div>
+            <div class="controls">
+                <button class="audio-cls cls"></button>
+                <button class="audio-max max"></button>
+                <button class="audio-min min"></button>
+            </div>
+        </div>
+        <div class="audio-client" aria-label="Audio player"></div>
+    </div>
+
+    <div class="taskbar">
+        <div class="start-button"><img src="assets/windows-xp/logo.svg"> start</div>
+
+        <div class="opened-tabs">
+            <div class="open-tab" onclick="window.open('https://www.facebook.com/ridwanpradhan', '_blank')"><img src="assets/windows-xp/documents.png"> r3d1bruh</div>
+            <div class="open-tab internet-tab"><img src="assets/windows-xp/ie.png"> Internet</div>
+            <div class="open-tab audio-tab"><img src="assets/windows-xp/file.png"> Audio</div>
+            <div class="open-tab" onclick="window.open('https://steamcommunity.com/id/r3d1bruh', '_blank')"><img src="assets/windows-xp/computer.png"> My Computer</div>
+            <div class="open-tab readme" style="display:none;"><img src="assets/windows-xp/notepad.png"> ReadME.txt</div>
+        </div>
+
+        <div class="time">11:20 PM</div>
+    </div>
+
+        <script>
+            // Reuse the site's cursor logic, but point it at root /assets.
+            window.__CURSOR_NORMAL_URL = 'assets/cursor.gif';
+            window.__CURSOR_REVERSED_URL = 'assets/cursor-reversed.gif';
+        </script>
+        <script src="cursor.js"></script>
+        <script type="module">
+            import 'https://cdn.jsdelivr.net/npm/media-chrome@4/+esm';
+            import 'https://cdn.jsdelivr.net/npm/@player.style/winamp/+esm';
+        </script>
+        <script src="assets/windows-xp/desktop.js"></script>
+</body>
+</html>
