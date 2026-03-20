@@ -25,7 +25,7 @@
             position: relative;
         }
 
-        .day-cell:hover:not(.disabled):not(.locked-cell) {
+        .day-cell:hover:not(.disabled) {
             transform: scale(1.05);
         }
 
@@ -35,26 +35,7 @@
             border-color: #e11d48 !important;
         }
 
-        .locked-cell {
-            cursor: default !important;
-            opacity: 0.9;
-        }
 
-        .lock-indicator {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #e11d48;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            border: 1px solid white;
-        }
 
         .star-anim {
             animation: star-pop 0.3s ease-out;
@@ -95,7 +76,7 @@
                 <i class="fas fa-user-lock"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-2">Admin Login Required</h3>
-            <p class="text-gray-500 text-sm mb-6">Attendance is public, but you need to sign in to make changes or lock days.</p>
+            <p class="text-gray-500 text-sm mb-6">Attendance is public, but you need to sign in to make changes.</p>
             <div class="space-y-3">
                 <button id="google-signin-btn" class="w-full bg-white border-2 border-gray-100 text-gray-700 px-4 py-3 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
@@ -106,20 +87,6 @@
         </div>
     </div>
 
-    <!-- Confirm Lock Modal -->
-    <div id="lock-modal" class="modal-bg">
-        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
-            <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                <i class="fas fa-lock"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Lock this day?</h3>
-            <p class="text-gray-500 text-sm mb-6">Once locked, this entry cannot be changed. It's permanent proof!</p>
-            <div class="flex gap-3">
-                <button onclick="closeLockModal()" class="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold">Cancel</button>
-                <button id="confirm-lock-btn" class="flex-1 py-2 bg-rose-500 text-white rounded-xl font-bold">Lock It</button>
-            </div>
-        </div>
-    </div>
 
     <div class="max-w-2xl w-full">
         <div class="text-center mb-8">
@@ -211,13 +178,10 @@
 
         let currentDate = new Date();
         let callData = {};
-        let lockedDays = {};
         let currentUser = null;
-        let pendingLockDate = null;
 
         // UI Elements
         const authModal = document.getElementById('auth-modal');
-        const lockModal = document.getElementById('lock-modal');
         const userChip = document.getElementById('user-chip');
         const signOutBtn = document.getElementById('sign-out-btn');
 
@@ -243,7 +207,6 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     callData = data.records || {};
-                    lockedDays = data.locked || {};
                 }
                 renderCalendar();
             });
@@ -267,7 +230,6 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateObj = new Date(year, month, day);
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isLocked = lockedDays[dateKey];
                 
                 const cell = document.createElement('div');
                 cell.className = `day-cell aspect-square flex flex-col items-center justify-center rounded-xl border-2 text-sm font-bold transition-all`;
@@ -280,21 +242,6 @@
                     if (callData[dateKey]) {
                         cell.classList.add('checked', 'star-anim');
                         cell.innerHTML = `<i class="fas fa-star text-yellow-300 text-xs"></i>`;
-                        
-                        if (isLocked) {
-                            cell.classList.add('locked-cell');
-                            cell.innerHTML += `<div class="lock-indicator"><i class="fas fa-lock"></i></div>`;
-                        } else if (currentUser) {
-                            // Only show Lock button to logged-in users
-                            const lockBtn = document.createElement('button');
-                            lockBtn.className = "mt-1 text-[7px] bg-white text-rose-500 px-1 rounded border border-rose-200";
-                            lockBtn.innerText = "LOCK";
-                            lockBtn.onclick = (e) => {
-                                e.stopPropagation();
-                                openLockModal(dateKey);
-                            };
-                            cell.appendChild(lockBtn);
-                        }
                     } else {
                         cell.classList.add('bg-white', 'text-rose-800', 'border-rose-50');
                     }
@@ -303,7 +250,7 @@
                     cell.onclick = () => {
                         if (!currentUser) {
                             openAuthModal();
-                        } else if (!isLocked) {
+                        } else {
                             toggleDay(dateKey);
                         }
                     };
@@ -328,8 +275,7 @@
             if (!currentUser) return;
             try {
                 await setDoc(doc(db, 'user_data', MY_DOC_ID), { 
-                    records: callData, 
-                    locked: lockedDays 
+                    records: callData
                 }, { merge: true });
             } catch (e) {
                 console.error("Save failed:", e);
@@ -340,15 +286,7 @@
         // Modals & Auth Actions
         window.openAuthModal = () => authModal.style.display = 'flex';
         window.closeAuthModal = () => authModal.style.display = 'none';
-        
-        window.openLockModal = (dateKey) => {
-            pendingLockDate = dateKey;
-            lockModal.style.display = 'flex';
-        };
-        window.closeLockModal = () => {
-            pendingLockDate = null;
-            lockModal.style.display = 'none';
-        };
+
 
         document.getElementById('google-signin-btn').onclick = async () => {
             try {
@@ -360,13 +298,6 @@
 
         signOutBtn.onclick = () => signOut(auth);
 
-        document.getElementById('confirm-lock-btn').onclick = () => {
-            if (pendingLockDate && currentUser) {
-                lockedDays[pendingLockDate] = true;
-                saveData();
-                closeLockModal();
-            }
-        };
 
         function updateStats() {
             const activeDates = Object.keys(callData).filter(k => callData[k]);
