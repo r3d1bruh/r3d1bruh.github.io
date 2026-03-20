@@ -74,76 +74,48 @@
             box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2);
         }
 
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 241, 242, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
         .modal-bg {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 110;
+            padding: 20px;
         }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
 
-    <!-- Loading Screen -->
-    <div id="loading" class="loading-overlay">
-        <div class="text-center p-6">
-            <div id="loading-spinner" class="text-rose-500 text-xl font-bold animate-pulse mb-2">Syncing with Dora's Cloud...</div>
-            <p id="status-msg" class="text-rose-300 text-xs mb-4">Connecting to Firebase...</p>
-            
-            <!-- Setup Guide (Shown on Error) -->
-            <div id="error-box" class="hidden text-rose-600 bg-rose-50 p-6 rounded-xl text-sm border border-rose-100 max-w-sm mx-auto shadow-lg">
-                <div class="mb-4">
-                    <div class="bg-rose-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i class="fas fa-key text-rose-500 text-xl"></i>
-                    </div>
-                    <p class="font-bold text-lg">Enable Anonymous Auth</p>
-                </div>
-                <div class="text-left text-xs bg-white/50 p-4 rounded-lg border border-rose-200 mb-6 space-y-3">
-                    <p>Firebase is rejecting the connection because <strong>Anonymous Login</strong> isn't turned on yet.</p>
-                    <div class="font-bold border-b border-rose-100 pb-1">How to fix:</div>
-                    <ol class="list-decimal list-inside space-y-2 leading-relaxed">
-                        <li>Open your <strong>Firebase Console</strong></li>
-                        <li>Click <strong>Authentication</strong> in the left sidebar</li>
-                        <li>Go to the <strong>Sign-in method</strong> tab</li>
-                        <li>Click <strong>Add new provider</strong></li>
-                        <li>Select <strong>Anonymous</strong>, switch the toggle to <strong>Enabled</strong>, and click <strong>Save</strong></li>
-                    </ol>
-                </div>
-                <div class="space-y-3">
-                    <button onclick="window.location.reload()" class="w-full bg-rose-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:bg-rose-600 transition-all active:scale-95">
-                        I've enabled it, Refresh Now
-                    </button>
-                    <button onclick="document.getElementById('loading').style.display='none'; renderCalendar();" class="w-full py-2 text-rose-400 text-xs font-bold hover:text-rose-500 transition-colors">
-                        Continue in Offline Mode
-                    </button>
-                </div>
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-bg">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Admin Login Required</h3>
+            <p class="text-gray-500 text-sm mb-6">Attendance is public, but you need to sign in to make changes or lock days.</p>
+            <div class="space-y-3">
+                <button id="google-signin-btn" class="w-full bg-white border-2 border-gray-100 text-gray-700 px-4 py-3 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
+                    Sign in with Google
+                </button>
+                <button onclick="closeAuthModal()" class="w-full py-2 text-gray-400 text-sm font-medium">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- Confirm Lock Modal -->
     <div id="lock-modal" class="modal-bg">
-        <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl text-center">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
             <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                 <i class="fas fa-lock"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-2">Lock this day?</h3>
-            <p class="text-gray-500 text-sm mb-6">Once locked, you can't change this entry. It's permanent proof!</p>
+            <p class="text-gray-500 text-sm mb-6">Once locked, this entry cannot be changed. It's permanent proof!</p>
             <div class="flex gap-3">
-                <button onclick="closeModal()" class="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold">Cancel</button>
+                <button onclick="closeLockModal()" class="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold">Cancel</button>
                 <button id="confirm-lock-btn" class="flex-1 py-2 bg-rose-500 text-white rounded-xl font-bold">Lock It</button>
             </div>
         </div>
@@ -161,20 +133,27 @@
             </div>
             <h1 class="text-4xl font-bold text-rose-600 mb-2">Dora's Attendance ⭐</h1>
             <p class="text-rose-400 font-medium italic">Tracking the yaps since March 19th</p>
+            
+            <!-- User Status Chip -->
+            <div id="user-chip" class="mt-4 inline-flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full text-[10px] font-bold text-rose-400 border border-rose-100">
+                <i class="fas fa-eye"></i> PUBLIC VIEW
+            </div>
         </div>
 
+        <!-- Stats Section -->
         <div class="card rounded-3xl p-6 mb-8 shadow-sm flex justify-around items-center text-center">
             <div>
                 <span class="block text-3xl font-bold text-rose-500" id="streak-count">0</span>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Bestie Streak</span>
+                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Streak</span>
             </div>
             <div class="h-12 w-px bg-rose-100"></div>
             <div>
                 <span class="block text-3xl font-bold text-rose-500" id="total-calls">0</span>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Total Yaps</span>
+                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Total Stars</span>
             </div>
         </div>
 
+        <!-- Calendar Card -->
         <div class="card rounded-3xl p-6 shadow-md">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-semibold text-gray-700" id="month-display">Loading...</h2>
@@ -197,134 +176,80 @@
             <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
         </div>
 
-        <div id="sync-status" class="mt-8 text-center text-xs text-rose-300 font-bold uppercase tracking-widest">
-            Checking Cloud Status...
+        <div id="sync-status" class="mt-8 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
+            <i class="fas fa-cloud"></i> Synced with Cloud
         </div>
+        
+        <button id="sign-out-btn" class="hidden mx-auto mt-4 text-rose-300 text-[10px] font-bold uppercase hover:text-rose-500 underline">Sign Out</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // APP CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyC0VH6FcJ_YrSC_bbWdUC0KsHvRhuueNVY",
             authDomain: "dora-8aa96.firebaseapp.com",
             projectId: "dora-8aa96",
             storageBucket: "dora-8aa96.firebasestorage.app",
             messagingSenderId: "582926556937",
-            appId: "1:582926556937:web:8388a1f5af6c10a5633dd8",
-            measurementId: "G-G00CCE3HEL"
+            appId: "1:582926556937:web:8388a1f5af6c10a5633dd8"
         };
+
+        // If you want to restrict who can edit, add emails here:
+        // const ALLOWED_EMAILS = ['ohpajn@gmail.com']; 
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
         const MY_DOC_ID = "main_attendance_tracker";
-        const provider = new GoogleAuthProvider();
-        
-        let currentDate = new Date(); 
-        let callData = JSON.parse(localStorage.getItem('dora_backup_data')) || {}; 
-        let lockedDays = JSON.parse(localStorage.getItem('dora_backup_locked')) || {}; 
-        let user = null;
+        const START_DATE = new Date(2025, 2, 19); // March 19, 2025
+
+        let currentDate = new Date();
+        let callData = {};
+        let lockedDays = {};
+        let currentUser = null;
         let pendingLockDate = null;
-        let db = null;
-        let auth = null;
 
-        const loadingOverlay = document.getElementById('loading');
-        const syncStatus = document.getElementById('sync-status');
-        const modal = document.getElementById('lock-modal');
-        const statusMsg = document.getElementById('status-msg');
-        const errorBox = document.getElementById('error-box');
-        const loadingSpinner = document.getElementById('loading-spinner');
+        // UI Elements
+        const authModal = document.getElementById('auth-modal');
+        const lockModal = document.getElementById('lock-modal');
+        const userChip = document.getElementById('user-chip');
+        const signOutBtn = document.getElementById('sign-out-btn');
 
-        const showLoginPrompt = () => {
-            errorBox.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-
-            loadingSpinner.innerText = "Sign in to Dora's Cloud...";
-            statusMsg.innerHTML = `
-                <button id="login-btn" class="bg-white text-gray-700 px-6 py-2 rounded-full font-bold shadow-md inline-flex items-center gap-2 mx-auto mt-4">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="" />
-                    Sign in with Google
-                </button>
-                <div>
-                    <button id="offline-btn" class="mt-3 text-rose-400 text-xs font-bold hover:text-rose-500 transition-colors">
-                        Continue in Offline Mode
-                    </button>
-                </div>
-            `;
-
-            const loginBtn = document.getElementById('login-btn');
-            if (loginBtn) {
-                loginBtn.onclick = async () => {
-                    try {
-                        statusMsg.innerText = "Opening Google sign-in...";
-                        await signInWithPopup(auth, provider);
-                    } catch (e) {
-                        console.error('Google sign-in failed:', e);
-                        statusMsg.innerText = "Sign-in failed. Try again or use Offline Mode.";
-                    }
-                };
-            }
-
-            const offlineBtn = document.getElementById('offline-btn');
-            if (offlineBtn) {
-                offlineBtn.onclick = () => {
-                    loadingOverlay.style.display = 'none';
-                    syncStatus.innerText = "Offline Mode (Not signed in)";
-                    renderCalendar();
-                };
-            }
-        };
-
-        const setupDataListener = () => {
-            statusMsg.innerText = "Fetching Dora's Data...";
-            const displayName = (user && (user.displayName || user.email)) ? (user.displayName || user.email) : 'Signed In';
-            syncStatus.innerHTML = `Signed in as ${displayName} <i class="fas fa-check-circle"></i>`;
-
-            const docRef = doc(db, 'user_data', MY_DOC_ID);
-            onSnapshot(
-                docRef,
-                (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        callData = data.records || {};
-                        lockedDays = data.locked || {};
-                        localStorage.setItem('dora_backup_data', JSON.stringify(callData));
-                        localStorage.setItem('dora_backup_locked', JSON.stringify(lockedDays));
-                    }
-                    renderCalendar();
-                    loadingOverlay.style.display = 'none';
-                },
-                (error) => {
-                    console.warn("Firestore error:", error);
-                    loadingOverlay.style.display = 'none';
-                    syncStatus.innerText = "Offline Mode (Cloud Fetch Failed)";
-                    renderCalendar();
+        // Initial Load
+        const init = () => {
+            // 1. Set up Auth Listener
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                if (user) {
+                    userChip.innerHTML = `<i class="fas fa-unlock"></i> ADMIN: ${user.displayName || 'User'}`;
+                    signOutBtn.classList.remove('hidden');
+                    closeAuthModal();
+                } else {
+                    userChip.innerHTML = `<i class="fas fa-eye"></i> PUBLIC VIEW`;
+                    signOutBtn.classList.add('hidden');
                 }
-            );
-        };
-
-        const init = async () => {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
-                    if (user) {
-                        setupDataListener();
-                    } else {
-                        showLoginPrompt();
-                    }
-                });
-            } catch (e) {
-                console.error("Initialization failed:", e);
-                loadingOverlay.style.display = 'none';
-                syncStatus.innerText = "Offline Mode (Local Storage)";
                 renderCalendar();
-            }
+            });
+
+            // 2. Set up Firestore Real-time Listener (Publicly accessible)
+            const docRef = doc(db, 'user_data', MY_DOC_ID);
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    callData = data.records || {};
+                    lockedDays = data.locked || {};
+                }
+                renderCalendar();
+            });
         };
 
+        // Render Logic
         window.renderCalendar = function() {
             const grid = document.getElementById('calendar-grid');
             const monthDisplay = document.getElementById('month-display');
@@ -341,16 +266,16 @@
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateObj = new Date(year, month, day);
-                const dateKey = dateObj.toISOString().split('T')[0];
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isLocked = lockedDays[dateKey];
                 
                 const cell = document.createElement('div');
-                cell.className = `day-cell aspect-square flex flex-col items-center justify-center rounded-xl border-2 text-sm font-bold cursor-pointer`;
+                cell.className = `day-cell aspect-square flex flex-col items-center justify-center rounded-xl border-2 text-sm font-bold transition-all`;
                 cell.innerText = day;
 
-                const startLimit = new Date(2026, 2, 19);
-                if (dateObj < startLimit && dateObj.toDateString() !== startLimit.toDateString()) {
-                    cell.className += ' opacity-20 disabled cursor-not-allowed bg-gray-50 text-gray-300 border-transparent';
+                // Disable days before start date
+                if (dateObj < START_DATE && dateObj.toDateString() !== START_DATE.toDateString()) {
+                    cell.className += ' opacity-10 grayscale pointer-events-none bg-gray-50 border-transparent';
                 } else {
                     if (callData[dateKey]) {
                         cell.classList.add('checked', 'star-anim');
@@ -359,13 +284,14 @@
                         if (isLocked) {
                             cell.classList.add('locked-cell');
                             cell.innerHTML += `<div class="lock-indicator"><i class="fas fa-lock"></i></div>`;
-                        } else {
+                        } else if (currentUser) {
+                            // Only show Lock button to logged-in users
                             const lockBtn = document.createElement('button');
-                            lockBtn.className = "mt-1 text-[8px] bg-white text-rose-500 px-1 rounded border border-rose-200 hover:bg-rose-50 transition-colors";
+                            lockBtn.className = "mt-1 text-[7px] bg-white text-rose-500 px-1 rounded border border-rose-200";
                             lockBtn.innerText = "LOCK";
                             lockBtn.onclick = (e) => {
                                 e.stopPropagation();
-                                openModal(dateKey);
+                                openLockModal(dateKey);
                             };
                             cell.appendChild(lockBtn);
                         }
@@ -373,64 +299,77 @@
                         cell.classList.add('bg-white', 'text-rose-800', 'border-rose-50');
                     }
 
-                    if (!isLocked) {
-                        cell.onclick = () => toggleDay(dateKey);
-                    }
+                    // Click Behavior
+                    cell.onclick = () => {
+                        if (!currentUser) {
+                            openAuthModal();
+                        } else if (!isLocked) {
+                            toggleDay(dateKey);
+                        }
+                    };
                 }
 
-                const today = new Date();
-                if (dateObj.toDateString() === today.toDateString()) {
-                    cell.style.boxShadow = "0 0 0 3px #fda4af inset";
+                // Highlight Today
+                if (dateObj.toDateString() === new Date().toDateString()) {
+                    cell.style.boxShadow = "0 0 0 2px #fda4af";
                 }
+                
                 grid.appendChild(cell);
             }
             updateStats();
-        }
+        };
 
         async function toggleDay(dateKey) {
-            if (lockedDays[dateKey]) return;
             callData[dateKey] = !callData[dateKey];
-            renderCalendar();
             saveData();
         }
 
         async function saveData() {
-            localStorage.setItem('dora_backup_data', JSON.stringify(callData));
-            localStorage.setItem('dora_backup_locked', JSON.stringify(lockedDays));
-
-            if (user && db) {
-                try {
-                    await setDoc(doc(db, 'user_data', MY_DOC_ID), { 
-                        records: callData, 
-                        locked: lockedDays 
-                    }, { merge: true });
-                } catch (e) {
-                    console.error("Cloud Save Error:", e);
-                }
+            if (!currentUser) return;
+            try {
+                await setDoc(doc(db, 'user_data', MY_DOC_ID), { 
+                    records: callData, 
+                    locked: lockedDays 
+                }, { merge: true });
+            } catch (e) {
+                console.error("Save failed:", e);
+                alert("Cloud save failed. Check console for errors.");
             }
         }
 
-        window.openModal = (dateKey) => {
+        // Modals & Auth Actions
+        window.openAuthModal = () => authModal.style.display = 'flex';
+        window.closeAuthModal = () => authModal.style.display = 'none';
+        
+        window.openLockModal = (dateKey) => {
             pendingLockDate = dateKey;
-            modal.style.display = 'flex';
+            lockModal.style.display = 'flex';
+        };
+        window.closeLockModal = () => {
+            pendingLockDate = null;
+            lockModal.style.display = 'none';
         };
 
-        window.closeModal = () => {
-            pendingLockDate = null;
-            modal.style.display = 'none';
+        document.getElementById('google-signin-btn').onclick = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (e) {
+                console.error("Login Error:", e);
+            }
         };
+
+        signOutBtn.onclick = () => signOut(auth);
 
         document.getElementById('confirm-lock-btn').onclick = () => {
-            if (pendingLockDate) {
+            if (pendingLockDate && currentUser) {
                 lockedDays[pendingLockDate] = true;
                 saveData();
-                closeModal();
-                renderCalendar();
+                closeLockModal();
             }
         };
 
         function updateStats() {
-            const activeDates = Object.keys(callData).filter(k => callData[k]).sort();
+            const activeDates = Object.keys(callData).filter(k => callData[k]);
             document.getElementById('total-calls').innerText = activeDates.length;
 
             let streak = 0;
@@ -438,11 +377,12 @@
             checkDate.setHours(0,0,0,0);
 
             while (true) {
-                const key = checkDate.toISOString().split('T')[0];
+                const key = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
                 if (callData[key]) {
                     streak++;
                     checkDate.setDate(checkDate.getDate() - 1);
                 } else {
+                    // If today is empty, check yesterday to see if streak is still alive
                     if (streak === 0 && checkDate.toDateString() === new Date().toDateString()) {
                         checkDate.setDate(checkDate.getDate() - 1);
                         continue;
