@@ -87,11 +87,6 @@
         }
 
         @supports (padding: env(safe-area-inset-top)) {
-            body {
-                padding-left: calc(env(safe-area-inset-left) + 12px);
-                padding-right: calc(env(safe-area-inset-right) + 12px);
-            }
-
             .modal-bg {
                 padding: calc(env(safe-area-inset-top) + 20px)
                         calc(env(safe-area-inset-right) + 20px)
@@ -101,7 +96,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-3 sm:p-4 md:p-8 flex flex-col items-center">
+<body class="min-h-screen p-2 sm:p-4 md:p-8 flex flex-col items-center">
 
     <!-- Auth Modal -->
     <div id="auth-modal" class="modal-bg">
@@ -142,7 +137,7 @@
         </div>
 
         <!-- Stats Section -->
-        <div class="card rounded-3xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm flex flex-col sm:flex-row justify-around items-center text-center gap-4 sm:gap-0">
+        <div class="card rounded-3xl p-3 sm:p-6 mb-6 sm:mb-8 shadow-sm flex flex-col sm:flex-row justify-around items-center text-center gap-4 sm:gap-0">
             <div>
                 <span class="block text-3xl font-bold text-rose-500" id="streak-count">0</span>
                 <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Streak</span>
@@ -155,10 +150,10 @@
         </div>
 
         <!-- Calendar Card -->
-        <div class="card rounded-3xl p-4 sm:p-6 shadow-md">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg sm:text-xl font-semibold text-gray-700" id="month-display">Loading...</h2>
-                <div class="flex gap-2">
+        <div class="card rounded-3xl p-3 sm:p-6 shadow-md">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-4 sm:mb-6">
+                <h2 class="w-full sm:w-auto text-lg sm:text-xl font-semibold text-gray-700" id="month-display">Loading...</h2>
+                <div class="flex gap-2 ml-auto">
                     <button id="prev-btn" class="w-10 h-10 grid place-items-center hover:bg-rose-50 rounded-full transition-colors" aria-label="Previous month"><i class="fas fa-chevron-left text-rose-400"></i></button>
                     <button id="next-btn" class="w-10 h-10 grid place-items-center hover:bg-rose-50 rounded-full transition-colors" aria-label="Next month"><i class="fas fa-chevron-right text-rose-400"></i></button>
                 </div>
@@ -178,7 +173,7 @@
         </div>
 
         <!-- Detailed Month Stats -->
-        <div class="card rounded-3xl p-4 sm:p-6 mt-6 sm:mt-8 mb-6 sm:mb-8 shadow-sm">
+        <div class="card rounded-3xl p-3 sm:p-6 mt-6 sm:mt-8 mb-6 sm:mb-8 shadow-sm">
             <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Month Stats</div>
             <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
                 <div>
@@ -444,7 +439,7 @@
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
                 const cell = document.createElement('div');
-                cell.className = `day-cell aspect-square flex flex-col items-center justify-center rounded-xl border-2 text-sm font-bold transition-all`;
+                cell.className = `day-cell aspect-square flex flex-col items-center justify-center rounded-xl border-2 text-base sm:text-sm font-bold transition-all`;
                 cell.innerText = day;
 
                 // Disable days before start date
@@ -453,7 +448,7 @@
                 } else {
                     if (callData[dateKey]) {
                         cell.classList.add('checked', 'star-anim');
-                        cell.innerHTML = `<i class="fas fa-star text-yellow-300 text-xs"></i>`;
+                        cell.innerHTML = `<i class="fas fa-star text-yellow-300 text-sm sm:text-xs"></i>`;
                     } else {
                         cell.classList.add('bg-white', 'text-rose-800', 'border-rose-50');
                     }
