@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dora's Attendance Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#fb7185">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         
@@ -91,7 +94,7 @@
     <div class="max-w-2xl w-full">
         <div class="text-center mb-8">
             <div class="relative inline-block mb-4">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Dora" 
+                 <img src="dora.webp" 
                      alt="Dora" 
                      class="profile-img rounded-full mx-auto">
                 <div class="absolute bottom-0 right-0 bg-yellow-400 rounded-full p-1 border-2 border-white">
@@ -120,6 +123,30 @@
             </div>
         </div>
 
+        <!-- Detailed Month Stats -->
+        <div class="card rounded-3xl p-6 mb-8 shadow-sm">
+            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Month Stats</div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <span class="block text-2xl font-bold text-rose-500" id="month-talked">0</span>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Talked Days</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-bold text-rose-500" id="month-missed">0</span>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Missed Days</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-bold text-rose-500" id="month-rate">0%</span>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Hit Rate</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-bold text-rose-500" id="month-best-streak">0</span>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Best Streak</span>
+                </div>
+            </div>
+            <div id="month-details" class="mt-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center"></div>
+        </div>
+
         <!-- Calendar Card -->
         <div class="card rounded-3xl p-6 shadow-md">
             <div class="flex justify-between items-center mb-6">
@@ -145,6 +172,10 @@
 
         <div id="sync-status" class="mt-8 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
             <i class="fas fa-cloud"></i> Synced with Cloud
+        </div>
+
+        <div id="last-seen" class="mt-2 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
+            Time since last Yap: --
         </div>
         
         <button id="sign-out-btn" class="hidden mx-auto mt-4 text-rose-300 text-[10px] font-bold uppercase hover:text-rose-500 underline">Sign Out</button>
@@ -180,22 +211,172 @@
         let callData = {};
         let currentUser = null;
 
+        let lastSeenIntervalId = null;
+
         // UI Elements
         const authModal = document.getElementById('auth-modal');
         const userChip = document.getElementById('user-chip');
         const signOutBtn = document.getElementById('sign-out-btn');
 
+        const lastSeenEl = document.getElementById('last-seen');
+        const monthTalkedEl = document.getElementById('month-talked');
+        const monthMissedEl = document.getElementById('month-missed');
+        const monthRateEl = document.getElementById('month-rate');
+        const monthBestStreakEl = document.getElementById('month-best-streak');
+        const monthDetailsEl = document.getElementById('month-details');
+
+        function setUserChip(isAdmin, labelText) {
+            userChip.innerHTML = '';
+            const icon = document.createElement('i');
+            icon.className = isAdmin ? 'fas fa-unlock' : 'fas fa-eye';
+            userChip.appendChild(icon);
+            userChip.appendChild(document.createTextNode(' ' + labelText));
+        }
+
+        function parseDateKeyToLocalDate(dateKey) {
+            // dateKey is YYYY-MM-DD
+            const [y, m, d] = dateKey.split('-').map((n) => parseInt(n, 10));
+            return new Date(y, m - 1, d);
+        }
+
+        function formatDuration(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return { days, hours, minutes, seconds };
+        }
+
+        function updateLastSeenCounter() {
+            if (!lastSeenEl) return;
+
+            const activeDates = Object.keys(callData).filter((k) => callData[k]).sort();
+            const lastKey = activeDates.length ? activeDates[activeDates.length - 1] : null;
+            if (!lastKey) {
+                lastSeenEl.textContent = 'Time since last Yap: --';
+                return;
+            }
+
+            const lastDate = parseDateKeyToLocalDate(lastKey);
+            const now = new Date();
+            const diff = now.getTime() - lastDate.getTime();
+            const { days, hours, minutes, seconds } = formatDuration(diff);
+            lastSeenEl.textContent = `Time since last Yap: ${days} days, ${hours} hours, ${minutes} mins, ${seconds}s`;
+        }
+
+        function startLastSeenTicker() {
+            if (lastSeenIntervalId != null) return;
+            updateLastSeenCounter();
+            lastSeenIntervalId = window.setInterval(updateLastSeenCounter, 1000);
+        }
+
+        function fireConfetti() {
+            try {
+                if (typeof window.confetti !== 'function') return;
+                window.confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.65 },
+                });
+            } catch {
+                // ignore
+            }
+        }
+
+        function getMonthKeyRange(year, monthIndex) {
+            const start = new Date(year, monthIndex, 1);
+            const end = new Date(year, monthIndex + 1, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            return { start, end };
+        }
+
+        function dateToKey(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function computeBestStreakInRange(startDate, endDate) {
+            let best = 0;
+            let current = 0;
+            const d = new Date(startDate);
+            d.setHours(0, 0, 0, 0);
+
+            while (d <= endDate) {
+                const key = dateToKey(d);
+                if (callData[key]) {
+                    current += 1;
+                    best = Math.max(best, current);
+                } else {
+                    current = 0;
+                }
+                d.setDate(d.getDate() + 1);
+            }
+            return best;
+        }
+
+        function updateMonthStats() {
+            if (!monthTalkedEl || !monthMissedEl || !monthRateEl || !monthBestStreakEl || !monthDetailsEl) return;
+
+            const year = currentDate.getFullYear();
+            const monthIndex = currentDate.getMonth();
+            const { start: monthStart, end: monthEnd } = getMonthKeyRange(year, monthIndex);
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const eligibleStart = new Date(Math.max(monthStart.getTime(), START_DATE.getTime()));
+            eligibleStart.setHours(0, 0, 0, 0);
+
+            const eligibleEnd = new Date(Math.min(monthEnd.getTime(), today.getTime()));
+            eligibleEnd.setHours(0, 0, 0, 0);
+
+            let eligibleDays = 0;
+            let talkedDays = 0;
+
+            if (eligibleStart <= eligibleEnd) {
+                const d = new Date(eligibleStart);
+                while (d <= eligibleEnd) {
+                    eligibleDays += 1;
+                    const key = dateToKey(d);
+                    if (callData[key]) talkedDays += 1;
+                    d.setDate(d.getDate() + 1);
+                }
+            }
+
+            const missedDays = Math.max(0, eligibleDays - talkedDays);
+            const rate = eligibleDays ? Math.round((talkedDays / eligibleDays) * 1000) / 10 : 0;
+            const bestStreak = (eligibleStart <= eligibleEnd) ? computeBestStreakInRange(eligibleStart, eligibleEnd) : 0;
+
+            monthTalkedEl.textContent = String(talkedDays);
+            monthMissedEl.textContent = String(missedDays);
+            monthRateEl.textContent = `${rate}%`;
+            monthBestStreakEl.textContent = String(bestStreak);
+
+            const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(monthStart);
+            if (!eligibleDays) {
+                monthDetailsEl.textContent = `${monthName} ${year}: no eligible days yet.`;
+            } else {
+                monthDetailsEl.textContent = `${monthName} ${year}: ${talkedDays}/${eligibleDays} days (missed ${missedDays}).`;
+            }
+        }
+
         // Initial Load
         const init = () => {
+            startLastSeenTicker();
             // 1. Set up Auth Listener
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
                 if (user) {
-                    userChip.innerHTML = `<i class="fas fa-unlock"></i> ADMIN: ${user.displayName || 'User'}`;
+                    const label = `ADMIN: ${user.displayName || user.email || 'User'}`;
+                    setUserChip(true, label);
                     signOutBtn.classList.remove('hidden');
                     closeAuthModal();
                 } else {
-                    userChip.innerHTML = `<i class="fas fa-eye"></i> PUBLIC VIEW`;
+                    setUserChip(false, 'PUBLIC VIEW');
                     signOutBtn.classList.add('hidden');
                 }
                 renderCalendar();
@@ -267,7 +448,10 @@
         };
 
         async function toggleDay(dateKey) {
-            callData[dateKey] = !callData[dateKey];
+            const wasStarred = !!callData[dateKey];
+            callData[dateKey] = !wasStarred;
+            renderCalendar();
+            if (!wasStarred && callData[dateKey]) fireConfetti();
             saveData();
         }
 
@@ -322,6 +506,9 @@
                 }
             }
             document.getElementById('streak-count').innerText = streak;
+
+            updateMonthStats();
+            updateLastSeenCounter();
         }
 
         document.getElementById('prev-btn').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
