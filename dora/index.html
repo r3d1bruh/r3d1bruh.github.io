@@ -86,6 +86,34 @@
             padding: 20px;
         }
 
+        /* Desktop layout: calendar left, everything else right */
+        @media (min-width: 460px) and (hover: hover) and (pointer: fine) {
+            .desktop-split {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(240px, 340px);
+                column-gap: clamp(10px, 2vw, 20px);
+                align-items: start;
+            }
+
+            .desktop-left {
+                grid-column: 1;
+                grid-row: 1 / span 99;
+            }
+
+            .desktop-right {
+                grid-column: 2;
+            }
+
+            .desktop-right-stack > * {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+
+            .desktop-right-stack > * + * {
+                margin-top: 12px !important;
+            }
+        }
+
         @supports (padding: env(safe-area-inset-top)) {
             .modal-bg {
                 padding: calc(env(safe-area-inset-top) + 20px)
@@ -117,40 +145,65 @@
     </div>
 
 
-    <div class="max-w-2xl w-full">
-        <div class="text-center mb-6 sm:mb-8">
-            <div class="relative inline-block mb-4">
-                 <img src="dora.webp" 
-                     alt="Dora" 
-                     class="profile-img rounded-full mx-auto w-[88px] h-[88px] sm:w-[100px] sm:h-[100px]">
-                <div class="absolute bottom-0 right-0 bg-yellow-400 rounded-full p-1 border-2 border-white">
-                    <i class="fas fa-star text-white text-xs"></i>
+    <div class="max-w-2xl lg:max-w-5xl w-full">
+        <div class="desktop-split">
+
+        <div class="desktop-right desktop-right-stack">
+            <div class="text-center mb-5 sm:mb-6">
+                <div class="relative inline-block mb-2 sm:mb-3">
+                    <img src="dora.webp" 
+                        alt="Dora" 
+                        class="profile-img rounded-full mx-auto w-[76px] h-[76px] sm:w-[88px] sm:h-[88px]">
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-rose-600 mb-1">Dora's Attendance ⭐</h1>
+                <p class="text-rose-400 font-medium italic text-xs sm:text-sm">Tracking the yaps XD</p>
+                
+                <!-- User Status Chip -->
+                <div id="user-chip" class="mt-2 inline-flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full text-[10px] font-bold text-rose-400 border border-rose-100 max-w-full">
+                    <i class="fas fa-eye"></i> PUBLIC VIEW
                 </div>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-bold text-rose-600 mb-2">Dora's Attendance ⭐</h1>
-            <p class="text-rose-400 font-medium italic text-sm sm:text-base">Tracking the yaps since March 19th</p>
-            
-            <!-- User Status Chip -->
-            <div id="user-chip" class="mt-4 inline-flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full text-[10px] font-bold text-rose-400 border border-rose-100 max-w-full">
-                <i class="fas fa-eye"></i> PUBLIC VIEW
-            </div>
-        </div>
 
-        <!-- Stats Section -->
-        <div class="card rounded-3xl p-3 sm:p-6 mb-6 sm:mb-8 shadow-sm flex flex-col sm:flex-row justify-around items-center text-center gap-4 sm:gap-0">
-            <div>
-                <span class="block text-3xl font-bold text-rose-500" id="streak-count">0</span>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Streak</span>
-            </div>
-            <div class="hidden sm:block h-12 w-px bg-rose-100"></div>
-            <div>
-                <span class="block text-3xl font-bold text-rose-500" id="total-calls">0</span>
-                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Total Stars</span>
+            <!-- Combined Stats -->
+            <div class="card rounded-3xl p-3 sm:p-6 shadow-sm">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
+                    <div>
+                        <span class="block text-3xl font-bold text-rose-500" id="streak-count">0</span>
+                        <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Streak</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-bold text-rose-500" id="total-calls">0</span>
+                        <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Total Stars</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-rose-100">
+                    <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Month Stats</div>
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
+                        <div>
+                            <span class="block text-2xl font-bold text-rose-500" id="month-talked">0</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Talked Days</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-rose-500" id="month-missed">0</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Missed Days</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-rose-500" id="month-rate">0%</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Hit Rate</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-rose-500" id="month-best-streak">0</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Best Streak</span>
+                        </div>
+                    </div>
+                    <div id="month-details" class="mt-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center"></div>
+                </div>
             </div>
         </div>
 
         <!-- Calendar Card -->
-        <div class="card rounded-3xl p-3 sm:p-6 shadow-md">
+        <div class="card desktop-left rounded-3xl p-3 sm:p-6 shadow-md">
             <div class="flex flex-wrap justify-between items-center gap-2 mb-4 sm:mb-6">
                 <h2 class="w-full sm:w-auto text-lg sm:text-xl font-semibold text-gray-700" id="month-display">Loading...</h2>
                 <div class="flex gap-2 ml-auto">
@@ -172,39 +225,15 @@
             <div id="calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
         </div>
 
-        <!-- Detailed Month Stats -->
-        <div class="card rounded-3xl p-3 sm:p-6 mt-6 sm:mt-8 mb-6 sm:mb-8 shadow-sm">
-            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Month Stats</div>
-            <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
-                <div>
-                    <span class="block text-2xl font-bold text-rose-500" id="month-talked">0</span>
-                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Talked Days</span>
-                </div>
-                <div>
-                    <span class="block text-2xl font-bold text-rose-500" id="month-missed">0</span>
-                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Missed Days</span>
-                </div>
-                <div>
-                    <span class="block text-2xl font-bold text-rose-500" id="month-rate">0%</span>
-                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Hit Rate</span>
-                </div>
-                <div>
-                    <span class="block text-2xl font-bold text-rose-500" id="month-best-streak">0</span>
-                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Best Streak</span>
-                </div>
+        <div class="desktop-right desktop-right-stack">
+            <div id="sync-status" class="mt-8 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
+                <i class="fas fa-cloud"></i> Synced with Cloud
             </div>
-            <div id="month-details" class="mt-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center"></div>
+            
+            <button id="sign-out-btn" class="hidden mx-auto mt-4 text-rose-300 text-[10px] font-bold uppercase hover:text-rose-500 underline">Sign Out</button>
         </div>
 
-        <div id="sync-status" class="mt-8 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
-            <i class="fas fa-cloud"></i> Synced with Cloud
         </div>
-
-        <div id="last-seen" class="mt-2 text-center text-[10px] text-rose-300 font-bold uppercase tracking-widest">
-            Time since last Yap: --
-        </div>
-        
-        <button id="sign-out-btn" class="hidden mx-auto mt-4 text-rose-300 text-[10px] font-bold uppercase hover:text-rose-500 underline">Sign Out</button>
     </div>
 
     <script type="module">
@@ -237,14 +266,10 @@
         let callData = {};
         let currentUser = null;
 
-        let lastSeenIntervalId = null;
-
         // UI Elements
         const authModal = document.getElementById('auth-modal');
         const userChip = document.getElementById('user-chip');
         const signOutBtn = document.getElementById('sign-out-btn');
-
-        const lastSeenEl = document.getElementById('last-seen');
         const monthTalkedEl = document.getElementById('month-talked');
         const monthMissedEl = document.getElementById('month-missed');
         const monthRateEl = document.getElementById('month-rate');
@@ -259,43 +284,6 @@
             userChip.appendChild(document.createTextNode(' ' + labelText));
         }
 
-        function parseDateKeyToLocalDate(dateKey) {
-            // dateKey is YYYY-MM-DD
-            const [y, m, d] = dateKey.split('-').map((n) => parseInt(n, 10));
-            return new Date(y, m - 1, d);
-        }
-
-        function formatDuration(ms) {
-            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-            const days = Math.floor(totalSeconds / 86400);
-            const hours = Math.floor((totalSeconds % 86400) / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            return { days, hours, minutes, seconds };
-        }
-
-        function updateLastSeenCounter() {
-            if (!lastSeenEl) return;
-
-            const activeDates = Object.keys(callData).filter((k) => callData[k]).sort();
-            const lastKey = activeDates.length ? activeDates[activeDates.length - 1] : null;
-            if (!lastKey) {
-                lastSeenEl.textContent = 'Time since last Yap: --';
-                return;
-            }
-
-            const lastDate = parseDateKeyToLocalDate(lastKey);
-            const now = new Date();
-            const diff = now.getTime() - lastDate.getTime();
-            const { days, hours, minutes, seconds } = formatDuration(diff);
-            lastSeenEl.textContent = `Time since last Yap: ${days} days, ${hours} hours, ${minutes} mins, ${seconds}s`;
-        }
-
-        function startLastSeenTicker() {
-            if (lastSeenIntervalId != null) return;
-            updateLastSeenCounter();
-            lastSeenIntervalId = window.setInterval(updateLastSeenCounter, 1000);
-        }
 
         function fireConfetti() {
             try {
@@ -392,7 +380,6 @@
 
         // Initial Load
         const init = () => {
-            startLastSeenTicker();
             // 1. Set up Auth Listener
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
@@ -534,7 +521,6 @@
             document.getElementById('streak-count').innerText = streak;
 
             updateMonthStats();
-            updateLastSeenCounter();
         }
 
         document.getElementById('prev-btn').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
