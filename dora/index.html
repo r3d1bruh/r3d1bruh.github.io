@@ -204,7 +204,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -218,6 +218,7 @@
         };
 
         const MY_DOC_ID = "main_attendance_tracker";
+        const provider = new GoogleAuthProvider();
         
         let currentDate = new Date(); 
         let callData = JSON.parse(localStorage.getItem('dora_backup_data')) || {}; 
@@ -225,6 +226,7 @@
         let user = null;
         let pendingLockDate = null;
         let db = null;
+        let auth = null;
 
         const loadingOverlay = document.getElementById('loading');
         const syncStatus = document.getElementById('sync-status');
@@ -233,62 +235,93 @@
         const errorBox = document.getElementById('error-box');
         const loadingSpinner = document.getElementById('loading-spinner');
 
-        const showErrorUI = () => {
-            errorBox.classList.remove('hidden');
-            loadingSpinner.classList.add('hidden');
-            statusMsg.classList.add('hidden');
+        const showLoginPrompt = () => {
+            errorBox.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+
+            loadingSpinner.innerText = "Sign in to Dora's Cloud...";
+            statusMsg.innerHTML = `
+                <button id="login-btn" class="bg-white text-gray-700 px-6 py-2 rounded-full font-bold shadow-md inline-flex items-center gap-2 mx-auto mt-4">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="" />
+                    Sign in with Google
+                </button>
+                <div>
+                    <button id="offline-btn" class="mt-3 text-rose-400 text-xs font-bold hover:text-rose-500 transition-colors">
+                        Continue in Offline Mode
+                    </button>
+                </div>
+            `;
+
+            const loginBtn = document.getElementById('login-btn');
+            if (loginBtn) {
+                loginBtn.onclick = async () => {
+                    try {
+                        statusMsg.innerText = "Opening Google sign-in...";
+                        await signInWithPopup(auth, provider);
+                    } catch (e) {
+                        console.error('Google sign-in failed:', e);
+                        statusMsg.innerText = "Sign-in failed. Try again or use Offline Mode.";
+                    }
+                };
+            }
+
+            const offlineBtn = document.getElementById('offline-btn');
+            if (offlineBtn) {
+                offlineBtn.onclick = () => {
+                    loadingOverlay.style.display = 'none';
+                    syncStatus.innerText = "Offline Mode (Not signed in)";
+                    renderCalendar();
+                };
+            }
+        };
+
+        const setupDataListener = () => {
+            statusMsg.innerText = "Fetching Dora's Data...";
+            const displayName = (user && (user.displayName || user.email)) ? (user.displayName || user.email) : 'Signed In';
+            syncStatus.innerHTML = `Signed in as ${displayName} <i class="fas fa-check-circle"></i>`;
+
+            const docRef = doc(db, 'user_data', MY_DOC_ID);
+            onSnapshot(
+                docRef,
+                (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        callData = data.records || {};
+                        lockedDays = data.locked || {};
+                        localStorage.setItem('dora_backup_data', JSON.stringify(callData));
+                        localStorage.setItem('dora_backup_locked', JSON.stringify(lockedDays));
+                    }
+                    renderCalendar();
+                    loadingOverlay.style.display = 'none';
+                },
+                (error) => {
+                    console.warn("Firestore error:", error);
+                    loadingOverlay.style.display = 'none';
+                    syncStatus.innerText = "Offline Mode (Cloud Fetch Failed)";
+                    renderCalendar();
+                }
+            );
         };
 
         const init = async () => {
             try {
                 const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
+                auth = getAuth(app);
                 db = getFirestore(app);
-
-                statusMsg.innerText = "Authenticating with Cloud...";
-                
-                await signInAnonymously(auth).catch(err => {
-                    // This is where the configuration error is caught
-                    if (err.code === 'auth/configuration-not-found' || err.message.includes('configuration-not-found')) {
-                        throw new Error('CONFIG_MISSING');
-                    }
-                    throw err;
-                });
 
                 onAuthStateChanged(auth, (u) => {
                     user = u;
                     if (user) {
-                        statusMsg.innerText = "Fetching Dora's Data...";
-                        syncStatus.innerHTML = 'Cloud Sync Active <i class="fas fa-cloud"></i>';
-                        
-                        const docRef = doc(db, 'user_data', MY_DOC_ID);
-                        onSnapshot(docRef, (docSnap) => {
-                            if (docSnap.exists()) {
-                                const data = docSnap.data();
-                                callData = data.records || {};
-                                lockedDays = data.locked || {};
-                                localStorage.setItem('dora_backup_data', JSON.stringify(callData));
-                                localStorage.setItem('dora_backup_locked', JSON.stringify(lockedDays));
-                            }
-                            renderCalendar();
-                            loadingOverlay.style.display = 'none';
-                        }, (error) => {
-                            console.warn("Firestore error:", error);
-                            loadingOverlay.style.display = 'none';
-                            syncStatus.innerText = "Offline Mode (Cloud Fetch Failed)";
-                            renderCalendar();
-                        });
+                        setupDataListener();
+                    } else {
+                        showLoginPrompt();
                     }
                 });
             } catch (e) {
                 console.error("Initialization failed:", e);
-                if (e.message === 'CONFIG_MISSING') {
-                    showErrorUI();
-                } else {
-                    loadingOverlay.style.display = 'none';
-                    syncStatus.innerText = "Offline Mode (Local Storage)";
-                    renderCalendar();
-                }
+                loadingOverlay.style.display = 'none';
+                syncStatus.innerText = "Offline Mode (Local Storage)";
+                renderCalendar();
             }
         };
 
