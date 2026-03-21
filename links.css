@@ -115,6 +115,15 @@ body.lt-links-page {
   white-space: nowrap;
 }
 
+.ie6-standalone .ie6-tool-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ie6-standalone .ie6-tool-group .ie6-tool {
+  padding: 3px 5px;
+}
+
 .ie6-standalone .ie6-sep {
   width: 2px;
   height: 24px;

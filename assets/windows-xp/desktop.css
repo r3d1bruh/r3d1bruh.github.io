@@ -431,6 +431,15 @@ iframe,
     box-shadow: none;
 }
 
+.internet-window .ie6-tool-group {
+    display: inline-flex;
+    align-items: center;
+}
+
+.internet-window .ie6-tool-group .ie6-tool {
+    padding: 3px 5px;
+}
+
 .internet-window .ie6-tool-text {
     white-space: nowrap;
 }
