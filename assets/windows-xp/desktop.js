@@ -81,6 +81,11 @@ const internetMinBtn = document.querySelector(".internet-min")
 const internetMaxBtn = document.querySelector(".internet-max")
 const internetCloseBtn = document.querySelector(".internet-cls")
 
+const ieFrame = document.getElementById("ie6-frame")
+const ieAddress = document.getElementById("ie6-address")
+const ieGoBtn = document.getElementById("ie6-go")
+const ieToolbar = internetWindow ? internetWindow.querySelector(".ie6-toolbar") : null
+
 // --- Audio window (Winamp theme) ---
 const audioWindow = document.querySelector(".audio-window")
 const audioTab = document.querySelector(".audio-tab")
@@ -297,165 +302,141 @@ if (internetCloseBtn) {
     }
 }
 
-// Allow the embedded Internet iframe (links.html?embed=1) to control the window.
-let internetIframeDrag = null
-window.addEventListener("message", (evt) => {
-    const data = evt && evt.data
-    if (!data || typeof data !== "object") return
+function setIeAddressValue(v) {
+    if (!ieAddress) return
+    try {
+        ieAddress.value = String(v || "")
+    } catch {
+        // ignore
+    }
+}
 
-    if (data.type === "internet-close") {
-        closeInternet()
-        return
+function getIeCurrentUrl() {
+    if (!ieFrame) return ""
+    try {
+        return ieFrame.contentWindow && ieFrame.contentWindow.location ? ieFrame.contentWindow.location.href : ieFrame.src
+    } catch {
+        return ieFrame.src || ""
+    }
+}
+
+function normalizeIeNavigateTarget(raw) {
+    const v = String(raw || "").trim()
+    if (!v) return ""
+
+    // If it looks like a local page name (e.g. "welcome"), assume .html.
+    if (!v.includes("://") && !v.startsWith("/") && !v.startsWith("./") && !v.startsWith("../") && !v.startsWith("about:") && /^[a-z0-9_-]+$/i.test(v)) {
+        return `${v}.html`
     }
 
-    if (data.type === "internet-minimize") {
-        toggleInternetMinimize()
-        return
+    // Keep explicit URLs and local-relative paths as-is.
+    if (
+        v.includes("://") ||
+        v.startsWith("about:") ||
+        v.startsWith("/") ||
+        v.startsWith("./") ||
+        v.startsWith("../")
+    ) {
+        return v
     }
 
-    if (data.type === "internet-maximize") {
-        toggleInternetMaximize()
-        return
-    }
+    // If it looks like a bare domain (e.g. google.com, www.example.org/path), assume https.
+    const looksLikeDomain = /^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(v)
+    if (looksLikeDomain) return `https://${v}`
 
-    if (data.type === "internet-drag-start") {
-        if (!internetWindow) return
-        if (internetWindow.classList.contains("minimized")) {
-            internetWindow.classList.remove("minimized")
-            setTabActive(true)
+    // Support localhost:PORT (and similar host:port) as http.
+    const looksLikeHostPort = /^(localhost|\d{1,3}(?:\.\d{1,3}){3}|[a-z0-9.-]+):\d+(\/.*)?$/i.test(v)
+    if (looksLikeHostPort) return `http://${v}`
+
+    return v
+}
+
+function ieNavigate(raw) {
+    if (!ieFrame) return
+    const v = normalizeIeNavigateTarget(raw)
+    if (!v) return
+    ieFrame.src = v
+    setIeAddressValue(v)
+}
+
+function ieAction(action) {
+    if (!ieFrame) return
+    try {
+        if (action === "back") {
+            ieFrame.contentWindow.history.back()
+        } else if (action === "forward") {
+            ieFrame.contentWindow.history.forward()
+        } else if (action === "refresh") {
+            ieFrame.contentWindow.location.reload()
+        } else if (action === "stop") {
+            ieFrame.contentWindow.stop()
+        } else if (action === "home") {
+            ieNavigate("ie-home.html")
+        } else if (action === "favorites") {
+            ieNavigate("links.html")
+        } else if (action === "search") {
+            ieNavigate("links.html")
+        } else if (action === "history") {
+            // Non-functional recreation: keep as a harmless placeholder.
+            ieNavigate("links.html")
+        } else if (action === "go") {
+            ieNavigate(ieAddress ? ieAddress.value : "")
         }
-        bringToFront(internetWindow)
-        normalizeWindow(internetWindow)
-
-        const globalX = typeof data.x === "number" ? data.x : NaN
-        const globalY = typeof data.y === "number" ? data.y : NaN
-        if (!Number.isFinite(globalX) || !Number.isFinite(globalY)) return
-
-        const winRect = internetWindow.getBoundingClientRect()
-
-        internetIframeDrag = {
-            lastClientX: globalX,
-            lastClientY: globalY,
-            grabOffsetX: globalX - winRect.left,
-            grabOffsetY: globalY - winRect.top,
-            rafPending: false,
-        }
-        return
-    }
-
-    if (data.type === "internet-drag-move") {
-        if (!internetWindow) return
-        if (internetWindow.classList.contains("maximized")) return
-
-        const globalX = typeof data.x === "number" ? data.x : NaN
-        const globalY = typeof data.y === "number" ? data.y : NaN
-        if (!Number.isFinite(globalX) || !Number.isFinite(globalY)) return
-
-        if (!internetIframeDrag) {
-            // If we missed start, approximate a start using current window bounds.
-            normalizeWindow(internetWindow)
-            const winRect = internetWindow.getBoundingClientRect()
-            internetIframeDrag = {
-                lastClientX: globalX,
-                lastClientY: globalY,
-                grabOffsetX: globalX - winRect.left,
-                grabOffsetY: globalY - winRect.top,
-                rafPending: false,
+    } catch {
+        // Most actions can fail on cross-origin pages; fall back to src-based navigation where possible.
+        if (action === "refresh") {
+            try {
+                ieFrame.src = ieFrame.src
+            } catch {
+                // ignore
             }
         }
-
-        internetIframeDrag.lastClientX = globalX
-        internetIframeDrag.lastClientY = globalY
-
-        if (!internetIframeDrag.rafPending) {
-            internetIframeDrag.rafPending = true
-            requestAnimationFrame(() => {
-                if (!internetWindow || !internetIframeDrag) return
-                internetIframeDrag.rafPending = false
-                if (internetWindow.classList.contains("maximized")) return
-
-                const winRect = internetWindow.getBoundingClientRect()
-                const area = getWorkArea()
-
-                const desiredLeft = internetIframeDrag.lastClientX - internetIframeDrag.grabOffsetX
-                const desiredTop = internetIframeDrag.lastClientY - internetIframeDrag.grabOffsetY
-
-                const clampedLeft = clamp(desiredLeft, area.left, area.right - winRect.width)
-                const clampedTop = clamp(desiredTop, area.top, area.bottom - winRect.height)
-
-                internetWindow.style.left = clampedLeft + "px"
-                internetWindow.style.top = clampedTop + "px"
-            })
-        }
-        return
     }
+}
 
-    if (data.type === "internet-drag-end") {
-        internetIframeDrag = null
-        return
-    }
+if (ieToolbar) {
+    ieToolbar.addEventListener("click", (e) => {
+        const target = e.target
+        if (!target || !target.closest) return
+        const btn = target.closest("[data-action]")
+        if (!btn) return
+        const action = btn.getAttribute("data-action")
+        if (!action) return
+        ieAction(action)
+    })
+}
 
-    if (data.type === "internet-set-max-size") {
-        if (!internetWindow) return
-        const wasSized = internetWindow.dataset.__contentSized === "1"
-        const maxClientH = typeof data.maxClientH === "number" ? data.maxClientH : null
-        const maxClientW = typeof data.maxClientW === "number" ? data.maxClientW : null
-        const preferredClientH = typeof data.preferredClientH === "number" ? data.preferredClientH : null
-        const preferredClientW = typeof data.preferredClientW === "number" ? data.preferredClientW : null
+if (ieGoBtn) {
+    ieGoBtn.addEventListener("click", () => ieAction("go"))
+}
 
-        // The Internet window's titlebar is ~25px (see desktop.css calc(100% - 25px)).
-        const CHROME_H = 25
-        const CHROME_W = 4
-
-        if (Number.isFinite(maxClientH) && maxClientH > 0) {
-            internetWindow.style.maxHeight = Math.round(maxClientH + CHROME_H) + "px"
+if (ieAddress) {
+    ieAddress.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault()
+            ieAction("go")
         }
-        if (Number.isFinite(maxClientW) && maxClientW > 0) {
-            internetWindow.style.maxWidth = Math.round(maxClientW + CHROME_W) + "px"
-        }
+    })
+}
 
-        // Shrink-to-fit (never grow) so the window doesn't start huge
-        // and can't be resized into empty space.
+if (ieFrame) {
+    ieFrame.addEventListener("load", () => {
+        setIeAddressValue(getIeCurrentUrl())
+
+        // Best-effort title sync (same-origin only).
         try {
-            if (!internetWindow.classList.contains("maximized")) {
-                const targetOuterH =
-                    Number.isFinite(preferredClientH) && preferredClientH > 0 ? preferredClientH + CHROME_H : null
-                const targetOuterW =
-                    Number.isFinite(preferredClientW) && preferredClientW > 0 ? preferredClientW + CHROME_W : null
-
-                const rect = internetWindow.getBoundingClientRect()
-
-                if (Number.isFinite(targetOuterW) && targetOuterW > 0) {
-                    if (!internetWindow.dataset.__contentSized || rect.width - targetOuterW > 6) {
-                        internetWindow.style.width = Math.round(targetOuterW) + "px"
-                    }
-                }
-                if (Number.isFinite(targetOuterH) && targetOuterH > 0) {
-                    if (!internetWindow.dataset.__contentSized || rect.height - targetOuterH > 6) {
-                        internetWindow.style.height = Math.round(targetOuterH) + "px"
-                    }
-                }
-
-                if (targetOuterW || targetOuterH) {
-                    internetWindow.dataset.__contentSized = "1"
-                }
+            const t = ieFrame.contentDocument && ieFrame.contentDocument.title ? String(ieFrame.contentDocument.title).trim() : ""
+            if (t) {
+                const titleEl = document.getElementById("ie6-page-title")
+                if (titleEl) titleEl.textContent = t
             }
         } catch {
-            // ignore
+            // ignore cross-origin failures
         }
-
-        // After the first shrink-to-fit, re-center so it's centered horizontally too.
-        try {
-            if (!wasSized && internetWindow.dataset.__contentSized === "1") {
-                centerWindowToWorkArea(internetWindow)
-                internetWindow.dataset.__contentCentered = "1"
-            }
-        } catch {
-            // ignore
-        }
-        clampWindowToWorkArea(internetWindow)
-    }
-})
+    })
+    // Initialize address bar on load.
+    setIeAddressValue(getIeCurrentUrl() || "links.html")
+}
 
 // Focus windows on click
 document.querySelectorAll(".window").forEach((w) => {
@@ -566,6 +547,13 @@ function toggleMaximize(win) {
         win.classList.remove("minimized")
     }
 
+    const setMaxButtonLabel = (label) => {
+        const btn = win.querySelector(
+            '.title-bar-controls button[aria-label="Maximize"], .title-bar-controls button[aria-label="Restore"]'
+        )
+        if (btn) btn.setAttribute("aria-label", label)
+    }
+
     const isMax = win.classList.contains("maximized")
     if (!isMax) {
         normalizeWindow(win)
@@ -587,12 +575,14 @@ function toggleMaximize(win) {
         win.style.left = ""
         win.style.top = ""
         win.classList.add("maximized")
+        setMaxButtonLabel("Restore")
         bringToFront(win)
         return
     }
 
     win.classList.remove("maximized")
     normalizeWindow(win)
+    setMaxButtonLabel("Maximize")
 
     if (typeof win.dataset.restoreWidth === "string") win.style.width = win.dataset.restoreWidth
     if (typeof win.dataset.restoreHeight === "string") win.style.height = win.dataset.restoreHeight
@@ -839,7 +829,7 @@ function wireWindow(win, handle) {
     handle.addEventListener("pointerdown", (e) => {
         if (e.button !== 0) return
         if (win.classList.contains("maximized")) return
-        if (e.target && e.target.closest && e.target.closest(".controls")) return
+        if (e.target && e.target.closest && e.target.closest(".title-bar-controls")) return
 
         bringToFront(win)
         normalizeWindow(win)
@@ -889,7 +879,7 @@ function wireWindow(win, handle) {
 
     // Double-click title bar to toggle maximize.
     handle.addEventListener("dblclick", (e) => {
-        if (e.target && e.target.closest && e.target.closest(".controls")) return
+        if (e.target && e.target.closest && e.target.closest(".title-bar-controls")) return
         toggleMaximize(win)
     })
 }

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/xp.css">
     <link rel="stylesheet" type="text/css" href="assets/windows-xp/index.css">
     <link rel="stylesheet" type="text/css" href="assets/windows-xp/desktop.css">
 </head>
@@ -41,11 +42,11 @@
 
     <div class="window" style="display:none;">
         <div class="title-bar">
-            <div><img src="assets/windows-xp/notepad.png"> ReadME.txt</div>
-            <div class="controls">
-                <button class="cls"></button>
-                <button class="max"></button>
-                <button class="min"></button>
+            <div class="title-bar-text"><img src="assets/windows-xp/notepad.png" alt=""> ReadME.txt</div>
+            <div class="title-bar-controls">
+                <button class="min" aria-label="Minimize"></button>
+                <button class="max" aria-label="Maximize"></button>
+                <button class="cls" aria-label="Close"></button>
             </div>
         </div>
         <div class="menu-bar">
@@ -59,26 +60,112 @@
     </div>
 
         <div class="window internet-window" style="display:none;">
-        <div class="title-bar internet-title-bar">
-            <div><img src="assets/windows-xp/icons/ie4.gif"> Internet</div>
-            <div class="controls">
-                <button class="internet-cls cls"></button>
-                <button class="internet-max max"></button>
-                <button class="internet-min min"></button>
+        <div class="title-bar internet-title-bar" aria-label="Microsoft Internet Explorer">
+            <div class="internet-title-text"><img src="assets/windows-xp/icons/ie4.gif" alt="" /> <span id="ie6-page-title">Welcome to Microsoft's Homepage</span> - Microsoft Internet Explorer</div>
+            <div class="title-bar-controls">
+                <button class="internet-min min" aria-label="Minimize"></button>
+                <button class="internet-max max" aria-label="Maximize"></button>
+                <button class="internet-cls cls" aria-label="Close"></button>
             </div>
         </div>
-        <div class="internet-client">
-            <iframe class="internet-frame" src="links.html?embed=1" title="Internet"></iframe>
+        <div class="internet-client ie6-client" aria-label="Internet Explorer">
+            <div class="ie6-menubar" role="menubar" aria-label="Menu bar">
+                <div class="ie6-gripper" aria-hidden="true"></div>
+                <button type="button" class="ie6-menuitem" role="menuitem">File</button>
+                <button type="button" class="ie6-menuitem" role="menuitem">Edit</button>
+                <button type="button" class="ie6-menuitem" role="menuitem">View</button>
+                <button type="button" class="ie6-menuitem" role="menuitem">Favorites</button>
+                <button type="button" class="ie6-menuitem" role="menuitem">Tools</button>
+                <button type="button" class="ie6-menuitem" role="menuitem">Help</button>
+            </div>
+
+            <div class="ie6-toolbar" role="toolbar" aria-label="Toolbar">
+                <button class="ie6-tool ie6-tool--back" type="button" data-action="back" title="Back" aria-label="Back">
+                    <span class="ie6-back-icon" aria-hidden="true">
+                        <img class="ie6-tool-img ie6-tool-img--big" src="assets/windows-xp/ie/icons/back.png" alt="" aria-hidden="true" />
+                    </span>
+                    <span class="ie6-tool-text">Back</span>
+                </button>
+                <button class="ie6-tool" type="button" data-action="forward" title="Forward" aria-label="Forward">
+                    <img class="ie6-tool-img ie6-tool-img--big" src="assets/windows-xp/ie/icons/forward.png" alt="" aria-hidden="true" />
+                    <span class="ie6-tool-text">Forward</span>
+                </button>
+                <span class="ie6-sep" aria-hidden="true"></span>
+                <button class="ie6-tool" type="button" data-action="stop" title="Stop" aria-label="Stop">
+                    <img class="ie6-tool-img" src="assets/windows-xp/ie/icons/stop.png" alt="" aria-hidden="true" />
+                </button>
+                <button class="ie6-tool" type="button" data-action="refresh" title="Refresh" aria-label="Refresh">
+                    <img class="ie6-tool-img" src="assets/windows-xp/ie/icons/refresh.png" alt="" aria-hidden="true" />
+                </button>
+                <button class="ie6-tool" type="button" data-action="home" title="Home" aria-label="Home">
+                    <img class="ie6-tool-img" src="assets/windows-xp/ie/icons/home.png" alt="" aria-hidden="true" />
+                    <span class="ie6-tool-text">Home</span>
+                </button>
+                <button class="ie6-tool" type="button" data-action="personalbar" title="Personal Bar" aria-label="Personal Bar">
+                    <span class="ie6-tool-icon" aria-hidden="true"></span>
+                    <span class="ie6-tool-text">Personal Bar</span>
+                </button>
+                <span class="ie6-sep" aria-hidden="true"></span>
+                <button class="ie6-tool" type="button" data-action="search" title="Search" aria-label="Search">
+                    <img class="ie6-tool-img" src="assets/windows-xp/ie/icons/search.png" alt="" aria-hidden="true" />
+                    <span class="ie6-tool-text">Search</span>
+                </button>
+                <button class="ie6-tool" type="button" data-action="favorites" title="Favorites" aria-label="Favorites">
+                    <img class="ie6-tool-img" src="assets/windows-xp/ie/icons/favorites.png" alt="" aria-hidden="true" />
+                    <span class="ie6-tool-text">Favorites</span>
+                </button>
+                <button class="ie6-tool" type="button" data-action="history" title="History" aria-label="History">
+                    <span class="ie6-tool-icon" aria-hidden="true"></span>
+                    <span class="ie6-tool-text">History</span>
+                </button>
+
+                <span class="ie6-spacer" aria-hidden="true"></span>
+                <button class="ie6-chevron" type="button" aria-label="More toolbar options" title="More">
+                    <span aria-hidden="true">&raquo;</span>
+                </button>
+            </div>
+
+            <div class="ie6-addressrow" aria-label="Address bar">
+                <span class="ie6-address-label">Address</span>
+                <div class="ie6-addressbox" role="group" aria-label="Address input">
+                    <input id="ie6-address" class="ie6-address-input" type="text" value="links.html" spellcheck="false" />
+                    <span class="ie6-address-dd" aria-hidden="true"></span>
+                </div>
+                <button id="ie6-go" class="ie6-go" type="button" data-action="go" aria-label="Go">
+                    <span class="ie6-go-text">Go</span>
+                    <span class="ie6-go-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10 6l6 6-6 6" />
+                        </svg>
+                    </span>
+                </button>
+
+                <div class="ie6-linksbar" aria-label="Links bar">
+                    <span class="ie6-links-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10 13a5 5 0 0 0 7.1 0l1.4-1.4a5 5 0 0 0-7.1-7.1L10.6 4" />
+                            <path d="M14 11a5 5 0 0 0-7.1 0L5.5 12.4a5 5 0 1 0 7.1 7.1L13.4 20" />
+                        </svg>
+                    </span>
+                    <span class="ie6-links-label">Links</span>
+                    <button class="ie6-links-customize" type="button" aria-label="Customize Links" title="Customize Links">Customize Links</button>
+                    <button class="ie6-chevron" type="button" aria-label="More links" title="More">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </div>
+            </div>
+
+            <iframe id="ie6-frame" class="internet-frame" src="links.html" title="Internet Explorer"></iframe>
         </div>
     </div>
 
     <div class="window audio-window" style="display:none;">
         <div class="title-bar audio-title-bar">
             <div><img src="assets/windows-xp/file.png"> Audio</div>
-            <div class="controls">
-                <button class="audio-cls cls"></button>
-                <button class="audio-max max"></button>
-                <button class="audio-min min"></button>
+            <div class="title-bar-controls">
+                <button class="audio-min min" aria-label="Minimize"></button>
+                <button class="audio-max max" aria-label="Maximize"></button>
+                <button class="audio-cls cls" aria-label="Close"></button>
             </div>
         </div>
         <div class="audio-client" aria-label="Audio player"></div>
