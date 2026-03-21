@@ -1,4 +1,4 @@
-/* links.css — XP.css glue + layout */
+/* links.css — Yahoo-style Linktree (content only) */
 
 html,
 body {
@@ -7,328 +7,316 @@ body {
 
 body.lt-links-page {
   margin: 0;
-  background: #000;
-  background-image: url('assets/windows-xp/desktop-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-
-  /* Bump readability for a link hub. */
-  font-size: 14px;
+  background: #ffffff;
+  overflow: auto;
 }
 
-@media (max-width: 680px) {
-  body.lt-links-page {
-    background-image: url('assets/windows-xp/desktop-bg-portrait.jpg');
-  }
-}
+/* --- IE6 ribbon (standalone only) --- */
 
-/* Draggable window positioning (standalone mode) */
-.lt-wrap {
-  position: fixed;
-  left: 50%;
-  top: 50%;
+.ie6-standalone {
+  position: sticky;
+  top: 0;
   z-index: 10;
-  width: min(560px, calc(100vw - 24px));
-  height: min(520px, calc(100vh - 24px));
-  transform: translate(-50%, -50%) translate3d(var(--win-x, 0px), var(--win-y, 0px), 0);
-  will-change: transform;
-}
-
-.lt-window {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.lt-ribbon {
-  flex: 0 0 auto;
-  padding: 6px 8px;
-  background: #ece9d8;
-  box-shadow: inset 0 1px #ffffff, inset 0 -1px #aca899;
-}
-
-.lt-ribbon-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-}
-
-.lt-ribbon-icon {
-  width: 20px;
-  height: 20px;
-  image-rendering: pixelated;
-}
-
-.lt-ribbon-title {
+  font-family: Tahoma, Arial, sans-serif;
   font-size: 12px;
-  white-space: nowrap;
+  color: #000;
 }
 
-.lt-address {
+.ie6-standalone .ie6-menubar,
+.ie6-standalone .ie6-toolbar,
+.ie6-standalone .ie6-addressrow {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: auto;
-  min-width: 0;
+  padding: 3px 6px;
+  background: #EFEDE1;
+  border-bottom: 1px solid #CCCCCC;
+  box-shadow: inset 0 1px #ffffff;
 }
 
-.lt-address-label {
-  font-size: 12px;
-  white-space: nowrap;
+.ie6-standalone .ie6-menubar {
+  height: 20px;
+  padding: 0 6px;
+  gap: 6px;
 }
 
-.lt-address-input {
-  width: 220px;
-  max-width: 48vw;
+.ie6-standalone .ie6-gripper {
+  width: 2px;
+  height: 20px;
+  margin-right: 6px;
+  border-left: 2px dotted #808080;
 }
 
-/* Prevent the resize grip from fighting the titlebar buttons */
-.title-bar-controls {
-  margin-right: 2px;
-}
-
-/* Window system states (draggableWindow.js) */
-.lt-wrap.xp-window--minimized {
-  height: auto;
-}
-
-.lt-wrap.xp-window--minimized .lt-window {
-  height: auto;
-}
-
-.lt-wrap.xp-window--minimized .lt-body {
-  display: none;
-}
-
-.lt-wrap.xp-window--maximized {
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  transform: none;
-}
-
-.lt-wrap.xp-window--maximized .lt-window {
-  width: 100%;
-  height: 100%;
-}
-
-.lt-wrap.xp-window--maximized .lt-resize-handle {
-  display: none;
-}
-
-/* Resize handles (draggableWindow.js) */
-.lt-resize-handle {
-  position: absolute;
-  z-index: 5;
-  background: transparent;
-  touch-action: none;
-}
-
-.lt-resize-handle[data-dir='n'] {
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 8px;
-  cursor: ns-resize;
-}
-
-.lt-resize-handle[data-dir='s'] {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 8px;
-  cursor: ns-resize;
-}
-
-.lt-resize-handle[data-dir='e'] {
-  right: 0;
-  top: 0;
-  width: 8px;
-  height: 100%;
-  cursor: ew-resize;
-}
-
-.lt-resize-handle[data-dir='w'] {
-  left: 0;
-  top: 0;
-  width: 8px;
-  height: 100%;
-  cursor: ew-resize;
-}
-
-.lt-resize-handle[data-dir='ne'],
-.lt-resize-handle[data-dir='nw'],
-.lt-resize-handle[data-dir='se'],
-.lt-resize-handle[data-dir='sw'] {
-  width: 14px;
-  height: 14px;
-}
-
-.lt-resize-handle[data-dir='ne'] {
-  right: 0;
-  top: 0;
-  cursor: nesw-resize;
-}
-
-.lt-resize-handle[data-dir='nw'] {
-  left: 0;
-  top: 0;
-  cursor: nwse-resize;
-}
-
-.lt-resize-handle[data-dir='se'] {
-  right: 0;
-  bottom: 0;
-  cursor: nwse-resize;
-}
-
-.lt-resize-handle[data-dir='sw'] {
-  left: 0;
-  bottom: 0;
-  cursor: nesw-resize;
-}
-
-.lt-body {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 0;
-}
-
-.lt-group {
-  flex: 1 1 auto;
-  min-height: 0;
-  margin: 0;
-  padding: 8px;
-}
-
-.lt-profile {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.lt-avatar {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-}
-
-.lt-profile-text {
-  min-width: 0;
-}
-
-.lt-handle {
-  margin: 0;
-  font-size: 1.45rem;
-  line-height: 1.1;
-}
-
-.lt-sub {
-  margin-top: 4px;
-  font-size: 1rem;
-}
-
-.lt-links-panel {
-  background: #fff;
-  border: 1px solid #7f9db9;
-  padding: 2px;
-  box-sizing: border-box;
-  height: 100%;
-  min-height: 0;
-  overflow-y: scroll; /* always show scrollbar */
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
-}
-
-/* XP.css already styles `ul.tree-view`; avoid double borders when we provide the panel frame. */
-.lt-links-panel > ul.tree-view {
+.ie6-standalone .ie6-menuitem {
+  appearance: none;
   border: none;
-}
-
-.lt-links {
-  margin: 0;
-}
-
-.lt-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: inherit;
-  text-decoration: none;
-  padding: 4px 6px;
-  border-radius: 2px;
-}
-
-.lt-link:hover,
-.lt-link:focus-visible {
-  outline: none;
-  background: #000080;
-  color: #ffffff;
-}
-
-.lt-icon {
-  width: 22px;
-  height: 22px;
-  flex: 0 0 auto;
-}
-
-.lt-label {
-  flex: 0 1 auto;
-  font-size: 1.05rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lt-note {
-  flex: 1 1 auto;
-  opacity: 0.75;
-  font-size: 0.98rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lt-statusbar {
-  flex: 0 0 auto;
-}
-
-/* Embedded mode: fit iframe and avoid double title/status bars */
-html.lt-embed body.lt-links-page {
   background: transparent;
+  padding: 1px 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #000;
+  cursor: default;
 }
 
-html.lt-embed .lt-wrap {
+.ie6-standalone .ie6-menuitem:hover,
+.ie6-standalone .ie6-menuitem:focus-visible {
+  outline: none;
+  border-color: transparent;
+  background: #ffffff;
+}
+
+.ie6-standalone .ie6-toolbar {
+  padding: 3px 6px;
+}
+
+.ie6-standalone .ie6-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 5px 8px;
+  border: none;
+  background: #EFEDE1;
+  box-shadow: none;
+  font-size: 12px;
+  color: #000;
+  cursor: default;
+}
+
+.ie6-standalone .ie6-tool--back {
+  padding: 3px 10px 3px 6px;
+}
+
+.ie6-standalone .ie6-back-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ie6-standalone .ie6-tool-icon,
+.ie6-standalone .ie6-tool-img {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.ie6-standalone .ie6-tool-img {
+  display: block;
+}
+
+.ie6-standalone .ie6-tool-img--big {
+  width: 24px;
+  height: 24px;
+}
+
+.ie6-standalone .ie6-tool-text {
+  white-space: nowrap;
+}
+
+.ie6-standalone .ie6-tool-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ie6-standalone .ie6-tool-group .ie6-tool {
+  padding: 3px 5px;
+}
+
+.ie6-standalone .ie6-sep {
+  width: 2px;
+  height: 24px;
+  background: linear-gradient(90deg, #ffffff, #aca899);
+  margin: 0 2px;
+}
+
+.ie6-standalone .ie6-spacer {
+  flex: 1 1 auto;
+  min-width: 8px;
+}
+
+.ie6-standalone .ie6-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  background: #EFEDE1;
+  box-shadow: none;
+  color: #000;
+  font-size: 14px;
+  line-height: 1;
+  cursor: default;
+}
+
+.ie6-standalone .ie6-addressrow {
+  padding: 3px 6px;
+}
+
+.ie6-standalone .ie6-address-label {
+  white-space: nowrap;
+}
+
+.ie6-standalone .ie6-addressbox {
+  flex: 1 1 auto;
+  min-width: 140px;
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border: 1px solid #7f9db9;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.22);
+}
+
+.ie6-standalone .ie6-address-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  padding: 2px 6px;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 12px;
+  outline: none;
+}
+
+.ie6-standalone .ie6-address-dd {
+  width: 18px;
+  border-left: 1px solid #aca899;
+  background: linear-gradient(180deg, #ffffff, #d6d2c6);
   position: relative;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  transform: none;
-  will-change: auto;
 }
 
-html.lt-embed .lt-window {
+.ie6-standalone .ie6-address-dd::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -10%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid #0055E0;
+}
+
+.ie6-standalone .ie6-go {
+  min-width: 44px;
+  height: 24px;
+  padding: 0 8px;
+  border: none;
+  background: linear-gradient(180deg, #34C84A, #1E9E35);
+  box-shadow: none;
+  color: #000;
+  font-size: 12px;
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ie6-standalone .ie6-linksbar {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  background: transparent;
   border: none;
   box-shadow: none;
-  border-radius: 0;
-  padding: 0;
 }
 
-html.lt-embed .lt-window .title-bar {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.ie6-standalone .ie6-links-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-html.lt-embed .lt-statusbar {
-  display: none;
+.ie6-standalone .ie6-links-customize {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 1px 4px;
+  font: inherit;
+  color: #000;
+  cursor: default;
+  white-space: nowrap;
 }
 
-/* In embed mode, keep the ribbon + controls (wired to parent via postMessage). */
+.ie6-standalone .ie6-links-customize:hover,
+.ie6-standalone .ie6-links-customize:focus-visible {
+  outline: none;
+  border-color: transparent;
+  background: #ffffff;
+}
+
+/* --- Yahoo (2000) inspired content --- */
+
+.lt-yahoo {
+  padding: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000;
+}
+
+.lt-yahoo-center {
+  display: block;
+}
+
+.lt-yahoo-top,
+.lt-yahoo-greenbar,
+.lt-yahoo-links {
+  width: 600px;
+  max-width: 100%;
+}
+
+.lt-yahoo-logo,
+.lt-yahoo-promo {
+  max-width: 100%;
+  height: auto;
+}
+
+.lt-yahoo-handle {
+  font-size: 14px;
+}
+
+.lt-yahoo-sub {
+  color: #333;
+}
+
+.lt-yahoo-avatar {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid #99cc99;
+  background: #ffffff;
+}
+
+.lt-yahoo-search {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.lt-yahoo-links-table {
+  width: 100%;
+}
+
+.lt-yahoo-link {
+  color: #0000ee;
+  text-decoration: underline;
+}
+
+.lt-yahoo-link:visited {
+  color: #551a8b;
+}
+
+.lt-yahoo-note {
+  color: #333;
+}
+
+.lt-yahoo-bullet {
+  width: 12px;
+  height: 12px;
+  vertical-align: text-bottom;
+}

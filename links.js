@@ -100,127 +100,84 @@
   }
 
   function renderLinktree() {
-    const mount = document.getElementById('linktree');
-    if (!mount) return;
+    const leftMount = document.getElementById('linktree-left');
+    const rightMount = document.getElementById('linktree-right');
+    const legacyMount = document.getElementById('linktree');
+    if (!leftMount && !rightMount && !legacyMount) return;
 
     const data = getData();
     renderProfile(data.profile);
 
-    mount.innerHTML = '';
+    if (leftMount) leftMount.innerHTML = '';
+    if (rightMount) rightMount.innerHTML = '';
+    if (legacyMount) legacyMount.innerHTML = '';
 
+    const items = [];
     for (const raw of data.links) {
       const item = normalizeLink(raw);
-      if (!item) continue;
+      if (item) items.push(item);
+    }
 
-      const li = createElement('li');
+    function renderYahooRow(item, mount) {
+      const tr = createElement('tr');
+      const td = createElement('td');
 
-      const a = createElement('a', 'lt-link', {
+      const bullet = createElement('img', 'lt-yahoo-bullet', {
+        src: 'temp/Yahoo!_files/sm.gif',
+        alt: '',
+      });
+      bullet.loading = 'lazy';
+      bullet.decoding = 'async';
+
+      const a = createElement('a', 'lt-yahoo-link', {
         href: item.href,
         target: '_blank',
         rel: 'noopener noreferrer',
       });
+      a.textContent = item.label;
 
-      if (item.icon) {
-        const img = createElement('img', 'lt-icon', { src: item.icon, alt: '' });
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        a.appendChild(img);
-      }
-
-      const label = createElement('span', 'lt-label');
-      label.textContent = item.label;
-      a.appendChild(label);
+      td.appendChild(bullet);
+      td.appendChild(document.createTextNode(' '));
+      td.appendChild(a);
 
       if (item.note) {
-        const note = createElement('span', 'lt-note');
+        const note = createElement('span', 'lt-yahoo-note');
         note.textContent = ` — ${item.note}`;
-        a.appendChild(note);
+        td.appendChild(note);
       }
 
-      li.appendChild(a);
-      mount.appendChild(li);
+      tr.appendChild(td);
+      mount.appendChild(tr);
     }
 
-    // Prevent resizing into pointless blank space when everything fits.
-    requestAnimationFrame(updateAutoMaxSize);
+    // Prefer the new Yahoo-style two-column layout when present.
+    if (leftMount && rightMount) {
+      const mid = Math.ceil(items.length / 2);
+      const leftItems = items.slice(0, mid);
+      const rightItems = items.slice(mid);
 
-    // In XP desktop embed mode, ask the parent to clamp the Internet window's resize.
-    requestAnimationFrame(sendEmbedMaxSize);
-  }
-
-  function updateAutoMaxSize() {
-    try {
-      if (window.__LT_EMBED) return;
-      const wrap = document.querySelector('.lt-wrap');
-      const win = document.querySelector('.lt-window');
-      if (!wrap || !win) return;
-
-      // Compute required height for current content.
-      const needed = Math.ceil(win.scrollHeight);
-      const viewportLimit = Math.max(240, window.innerHeight - 24);
-      const maxH = Math.min(viewportLimit, Math.max(needed, 240));
-
-      wrap.style.maxHeight = `${maxH}px`;
-
-      const currentH = wrap.getBoundingClientRect().height;
-      if (needed > 0 && currentH - needed > 24) {
-        wrap.style.height = `${Math.min(maxH, needed)}px`;
+      for (const item of leftItems) renderYahooRow(item, leftMount);
+      for (const item of rightItems) renderYahooRow(item, rightMount);
+    } else if (legacyMount) {
+      // Fallback: render into the old single mount if the page is older.
+      for (const item of items) {
+        const li = createElement('li');
+        const a = createElement('a', '', {
+          href: item.href,
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        });
+        a.textContent = item.label;
+        li.appendChild(a);
+        legacyMount.appendChild(li);
       }
-    } catch {
-      // ignore
     }
+
   }
 
-  function sendEmbedMaxSize() {
-    try {
-      if (!window.__LT_EMBED) return;
-
-      const titlebar = document.querySelector('.lt-titlebar');
-      const profile = document.querySelector('.lt-profile');
-      const group = document.querySelector('.lt-group');
-      const panel = document.querySelector('.lt-links-panel');
-      const list = document.getElementById('linktree');
-      if (!panel || !list) return;
-
-      const titleH = titlebar ? titlebar.getBoundingClientRect().height : 0;
-      const profileH = profile ? profile.getBoundingClientRect().height : 0;
-      const groupHBase = group ? group.getBoundingClientRect().height - panel.getBoundingClientRect().height : 0;
-
-      const firstLi = list.querySelector('li');
-      const rowH = firstLi ? firstLi.getBoundingClientRect().height : 28;
-      const rows = list.children ? list.children.length : 0;
-      const listH = Math.ceil(rowH * rows);
-
-      // Some breathing room for paddings/gaps.
-      const extra = 28;
-      const maxClientH = Math.ceil(titleH + profileH + groupHBase + listH + extra);
-
-      // Width: keep the Linktree window intentionally narrow.
-      // (Content uses ellipsis, so widening doesn't reveal "more links", just more whitespace.)
-      const preferredClientW = 436; // outer window becomes ~440px after desktop chrome
-      const maxClientW = preferredClientW;
-
-      // Height: clamp so resizing can't create empty space below the last link.
-      const preferredClientH = maxClientH;
-
-      parent.postMessage(
-        {
-          type: 'internet-set-max-size',
-          maxClientH,
-          maxClientW,
-          preferredClientH,
-          preferredClientW,
-        },
-        '*'
-      );
-    } catch {
-      // ignore
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', renderLinktree);
-
-  window.addEventListener('resize', () => requestAnimationFrame(updateAutoMaxSize));
+  document.addEventListener('DOMContentLoaded', () => {
+    renderLinktree();
+  });
 
   // Expose for debugging / future dynamic updates.
   window.r3d1Linktree = {
