@@ -86,6 +86,60 @@ body.lt-links-page {
   max-width: 48vw;
 }
 
+.lt-toolbar-btn {
+  width: 22px;
+  height: 20px;
+  padding: 2px 3px;
+  margin: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.lt-toolbar-btn:hover {
+  border: 1px solid #000080;
+  background-color: #e0e0e0;
+  box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080;
+}
+
+.lt-toolbar-btn:active {
+  box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+}
+
+.lt-stop-btn::before {
+  content: '⊗';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  font-size: 14px;
+  color: #c00000;
+  line-height: 1;
+}
+
+.lt-refresh-btn::before {
+  content: '↻';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  color: #008000;
+  line-height: 1;
+}
+
+.lt-home-btn::before {
+  content: '⌂';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  color: #000080;
+  line-height: 1;
+}
+
 /* Prevent the resize grip from fighting the titlebar buttons */
 .title-bar-controls {
   margin-right: 2px;
