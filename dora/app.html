@@ -340,7 +340,9 @@
   <div class="wrap" role="application" aria-label="Dora's Attendance">
 
     <header class="hero">
-      <img class="avatar" src="dora.webp" alt="Dora" />
+      <a href="anushkaverse.html" aria-label="Open Anushkaverse gallery" title="Open Anushkaverse gallery">
+        <img class="avatar" src="dora.webp" alt="Dora" />
+      </a>
       <h1 class="title">Dora's Attendance ⭐</h1>
       <p class="subtitle">Tracking the yaps since March 19th</p>
       <div id="user-chip" class="chip">PUBLIC VIEW</div>
@@ -535,22 +537,29 @@
       return { start, end };
     }
 
-    function computeBestStreakInRange(startDate, endDate) {
-      let best = 0;
-      let current = 0;
-      const d = new Date(startDate);
-      d.setHours(0, 0, 0, 0);
+    function computeAllTimeBestStreak() {
+      const activeKeys = Object.keys(callData)
+        .filter((key) => callData[key])
+        .sort();
 
-      while (d <= endDate) {
-        const key = dateToKey(d);
-        if (callData[key]) {
+      if (!activeKeys.length) return 0;
+
+      let best = 1;
+      let current = 1;
+
+      for (let i = 1; i < activeKeys.length; i++) {
+        const prevDate = new Date(`${activeKeys[i - 1]}T00:00:00`);
+        const currDate = new Date(`${activeKeys[i]}T00:00:00`);
+        const diffDays = Math.round((currDate - prevDate) / 86400000);
+
+        if (diffDays === 1) {
           current += 1;
           best = Math.max(best, current);
-        } else {
-          current = 0;
+        } else if (diffDays > 1) {
+          current = 1;
         }
-        d.setDate(d.getDate() + 1);
       }
+
       return best;
     }
 
@@ -583,7 +592,7 @@
 
       const missedDays = Math.max(0, eligibleDays - talkedDays);
       const rate = eligibleDays ? Math.round((talkedDays / eligibleDays) * 1000) / 10 : 0;
-      const bestStreak = eligibleStart <= eligibleEnd ? computeBestStreakInRange(eligibleStart, eligibleEnd) : 0;
+      const bestStreak = computeAllTimeBestStreak();
 
       monthTalkedEl.textContent = String(talkedDays);
       monthMissedEl.textContent = String(missedDays);

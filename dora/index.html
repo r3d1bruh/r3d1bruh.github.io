@@ -72,7 +72,10 @@
         .profile-img {
             width: 100px;
             height: 100px;
-            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            object-position: center;
+            background-color: #ffffff;
             border: 4px solid white;
             box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2);
         }
@@ -183,9 +186,11 @@
             <!-- Intro (mobile first, right column on desktop) -->
             <div class="intro-block text-center mb-4">
                 <div class="inline-flex items-center gap-3 mb-2">
-                    <img src="dora.webp" 
-                        alt="Dora" 
-                        class="profile-img rounded-full w-[76px] h-[76px] sm:w-[88px] sm:h-[88px]">
+                    <a href="anushkaverse.html" aria-label="Open Anushkaverse gallery" title="Open Anushkaverse gallery">
+                        <img src="dora.webp" 
+                            alt="Dora" 
+                            class="profile-img rounded-full w-[76px] h-[76px] sm:w-[88px] sm:h-[88px]">
+                    </a>
                     <div class="bg-white/70 border border-rose-100 rounded-2xl px-3 py-2 shadow-sm">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-fire text-rose-400"></i>
@@ -360,22 +365,29 @@
             return `${y}-${m}-${day}`;
         }
 
-        function computeBestStreakInRange(startDate, endDate) {
-            let best = 0;
-            let current = 0;
-            const d = new Date(startDate);
-            d.setHours(0, 0, 0, 0);
+        function computeAllTimeBestStreak() {
+            const activeKeys = Object.keys(callData)
+                .filter((key) => callData[key])
+                .sort();
 
-            while (d <= endDate) {
-                const key = dateToKey(d);
-                if (callData[key]) {
+            if (!activeKeys.length) return 0;
+
+            let best = 1;
+            let current = 1;
+
+            for (let i = 1; i < activeKeys.length; i++) {
+                const prevDate = new Date(`${activeKeys[i - 1]}T00:00:00`);
+                const currDate = new Date(`${activeKeys[i]}T00:00:00`);
+                const diffDays = Math.round((currDate - prevDate) / 86400000);
+
+                if (diffDays === 1) {
                     current += 1;
                     best = Math.max(best, current);
-                } else {
-                    current = 0;
+                } else if (diffDays > 1) {
+                    current = 1;
                 }
-                d.setDate(d.getDate() + 1);
             }
+
             return best;
         }
 
@@ -414,7 +426,7 @@
 
             const missedDays = Math.max(0, eligibleDays - talkedDays);
             const rate = eligibleDays ? Math.round((talkedDays / eligibleDays) * 1000) / 10 : 0;
-            const bestStreak = (eligibleStart <= eligibleEnd) ? computeBestStreakInRange(eligibleStart, eligibleEnd) : 0;
+            const bestStreak = computeAllTimeBestStreak();
 
             mTalked.textContent = `${talkedDays}/${eligibleDays}`;
             mMissed.textContent = String(missedDays);
