@@ -5,8 +5,7 @@ import MyComputer from './MyComputer';
 import Notepad from './Notepad';
 import Winamp from './Winamp';
 import Paint from './Paint';
-import iePaper from 'assets/windowsIcons/ie-paper.png';
-import ie from 'assets/windowsIcons/ie.png';
+import ieGif from 'assets/windowsIcons/ie.gif';
 import mine from 'assets/minesweeper/mine-icon.png';
 import error from 'assets/windowsIcons/897(16x16).png';
 import computer from 'assets/windowsIcons/676(16x16).png';
@@ -31,7 +30,7 @@ export const defaultAppState = [
     component: InternetExplorer,
     header: {
       title: 'The Chrome Explorer',
-      icon: iePaper,
+      icon: ieGif,
     },
     defaultSize: {
       width: 700,
@@ -62,7 +61,7 @@ export const defaultAppState = [
       y: 170,
     },
     resizable: false,
-    minimized: false,
+  minimized: true,
     maximized: false,
     id: genId(),
     zIndex: genIndex(),
@@ -83,7 +82,7 @@ export const defaultAppState = [
       y: 0,
     },
     resizable: false,
-    minimized: false,
+  minimized: true,
     maximized: false,
     id: genId(),
     zIndex: genIndex(),
@@ -103,7 +102,7 @@ export const defaultAppState = [
       y: 40,
     },
     resizable: true,
-    minimized: false,
+  minimized: true,
     maximized: window.innerWidth < 800,
     id: genId(),
     zIndex: genIndex(),
@@ -113,7 +112,7 @@ export const defaultAppState = [
 export const defaultIconState = [
   {
     id: 0,
-    icon: ie,
+    icon: ieGif,
     title: 'The Chrome Explorer',
     component: InternetExplorer,
     isFocus: false,
@@ -158,7 +157,7 @@ export const defaultIconState = [
 export const appSettings = {
   'The Chrome Explorer': {
     header: {
-      icon: iePaper,
+      icon: ieGif,
       title: 'The InternetExplorer',
     },
     component: InternetExplorer,

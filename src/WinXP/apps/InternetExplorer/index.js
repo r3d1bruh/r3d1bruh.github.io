@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { WindowDropDowns, Google } from 'components';
 import dropDownData from './dropDownData';
-import ie from 'assets/windowsIcons/ie-paper.png';
+import ie from 'assets/windowsIcons/ie.gif';
 import printer from 'assets/windowsIcons/17(32x32).png';
 import go from 'assets/windowsIcons/290.png';
 import links from 'assets/windowsIcons/links.png';

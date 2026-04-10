@@ -1,4 +1,10 @@
-import React, { useReducer, useRef, useCallback } from 'react';
+import React, {
+  useReducer,
+  useRef,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import styled, { keyframes } from 'styled-components';
 import useMouse from 'react-use/lib/useMouse';
 import ga from 'react-ga';
@@ -24,6 +30,8 @@ import Footer from './Footer';
 import Windows from './Windows';
 import Icons from './Icons';
 import { DashedBox } from 'components';
+
+const DESKTOP_SCALE = 1.25;
 
 const initState = {
   apps: defaultAppState,
@@ -182,6 +190,21 @@ function WinXP() {
   const [state, dispatch] = useReducer(reducer, initState);
   const ref = useRef(null);
   const mouse = useMouse(ref);
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+
+  useEffect(() => {
+    if (window.__LEGACY_CURSOR_LOADED__) return;
+    window.__CURSOR_NORMAL_URL = `${process.env.PUBLIC_URL}/assets/cursor.gif`;
+    window.__CURSOR_REVERSED_URL = `${process.env.PUBLIC_URL}/assets/cursor-reversed.gif`;
+    const script = document.createElement('script');
+    script.src = `${process.env.PUBLIC_URL}/cursor.js`;
+    script.async = true;
+    script.onload = () => {
+      window.__LEGACY_CURSOR_LOADED__ = true;
+    };
+    document.body.appendChild(script);
+  }, []);
+
   const focusedAppId = getFocusedAppId();
   const onFocusApp = useCallback(id => {
     dispatch({ type: FOCUS_APP, payload: id });
@@ -237,8 +260,8 @@ function WinXP() {
     dispatch({ type: FOCUS_DESKTOP });
   }
   function onClickMenuItem(o) {
-    if (o === 'Internet')
-      dispatch({ type: ADD_APP, payload: appSettings['Internet Explorer'] });
+    if (o === 'Internet' || o === 'Internet Explorer' || o === 'The Chrome Explorer')
+      dispatch({ type: ADD_APP, payload: appSettings['The Chrome Explorer'] });
     else if (o === 'Minesweeper')
       dispatch({ type: ADD_APP, payload: appSettings.Minesweeper });
     else if (o === 'Abstract Computer')
@@ -263,6 +286,9 @@ function WinXP() {
       });
   }
   function onMouseDownDesktop(e) {
+    if (contextMenu.visible) {
+      setContextMenu(menu => ({ ...menu, visible: false }));
+    }
     if (e.target === e.currentTarget)
       dispatch({
         type: START_SELECT,
@@ -285,46 +311,86 @@ function WinXP() {
   function onModalClose() {
     dispatch({ type: CANCEL_POWER_OFF });
   }
+
+  function onContextMenuDesktop(e) {
+    e.preventDefault();
+    dispatch({ type: END_SELECT });
+    setContextMenu({
+      visible: true,
+      x: e.clientX / DESKTOP_SCALE,
+      y: e.clientY / DESKTOP_SCALE,
+    });
+  }
+
+  function onClickContextMenuItem(action) {
+    if (action === 'refresh') {
+      dispatch({ type: FOCUS_DESKTOP });
+    } else if (action === 'open-ie') {
+      dispatch({ type: ADD_APP, payload: appSettings['The Chrome Explorer'] });
+    }
+    setContextMenu(menu => ({ ...menu, visible: false }));
+  }
+
   return (
     <Container
       ref={ref}
       onMouseUp={onMouseUpDesktop}
       onMouseDown={onMouseDownDesktop}
+      onContextMenu={onContextMenuDesktop}
       state={state.powerState}
     >
-      <Icons
-        icons={state.icons}
-        onMouseDown={onMouseDownIcon}
-        onDoubleClick={onDoubleClickIcon}
-        displayFocus={state.focusing === FOCUSING.ICON}
-        appSettings={appSettings}
-        mouse={mouse}
-        selecting={state.selecting}
-        setSelectedIcons={onIconsSelected}
-      />
-      <DashedBox startPos={state.selecting} mouse={mouse} />
-      <Windows
-        apps={state.apps}
-        onMouseDown={onFocusApp}
-        onClose={onCloseApp}
-        onMinimize={onMinimizeWindow}
-        onMaximize={onMaximizeWindow}
-        focusedAppId={focusedAppId}
-      />
-      <Footer
-        apps={state.apps}
-        onMouseDownApp={onMouseDownFooterApp}
-        focusedAppId={focusedAppId}
-        onMouseDown={onMouseDownFooter}
-        onClickMenuItem={onClickMenuItem}
-      />
-      {state.powerState !== POWER_STATE.START && (
-        <Modal
-          onClose={onModalClose}
-          onClickButton={onClickModalButton}
-          mode={state.powerState}
+      <BackgroundVideo autoPlay loop muted playsInline>
+        <source src={`${process.env.PUBLIC_URL}/assets/bg0.mp4`} type="video/mp4" />
+      </BackgroundVideo>
+      <DesktopLayer>
+        {contextMenu.visible && (
+          <DesktopContextMenu
+            style={{ left: contextMenu.x, top: contextMenu.y }}
+            onMouseDown={e => e.stopPropagation()}
+          >
+            <DesktopContextMenuItem onMouseDown={() => onClickContextMenuItem('refresh')}>
+              Refresh
+            </DesktopContextMenuItem>
+            <DesktopContextMenuItem onMouseDown={() => onClickContextMenuItem('open-ie')}>
+              Open Internet Explorer
+            </DesktopContextMenuItem>
+          </DesktopContextMenu>
+        )}
+        <Icons
+          icons={state.icons}
+          onMouseDown={onMouseDownIcon}
+          onDoubleClick={onDoubleClickIcon}
+          displayFocus={state.focusing === FOCUSING.ICON}
+          appSettings={appSettings}
+          mouse={mouse}
+          selecting={state.selecting}
+          setSelectedIcons={onIconsSelected}
         />
-      )}
+        <DashedBox startPos={state.selecting} mouse={mouse} />
+        <Windows
+          apps={state.apps}
+          onMouseDown={onFocusApp}
+          onClose={onCloseApp}
+          onMinimize={onMinimizeWindow}
+          onMaximize={onMaximizeWindow}
+          focusedAppId={focusedAppId}
+          desktopScale={DESKTOP_SCALE}
+        />
+        <Footer
+          apps={state.apps}
+          onMouseDownApp={onMouseDownFooterApp}
+          focusedAppId={focusedAppId}
+          onMouseDown={onMouseDownFooter}
+          onClickMenuItem={onClickMenuItem}
+        />
+        {state.powerState !== POWER_STATE.START && (
+          <Modal
+            onClose={onModalClose}
+            onClickButton={onClickModalButton}
+            mode={state.powerState}
+          />
+        )}
+      </DesktopLayer>
     </Container>
   );
 }
@@ -347,16 +413,56 @@ const animation = {
 };
 
 const Container = styled.div`
-  @import url('https://fonts.googleapis.com/css?family=Noto+Sans');
-  font-family: Tahoma, 'Noto Sans', sans-serif;
+  font-family: Tahoma, Verdana, 'Segoe UI', sans-serif;
   height: 100%;
   overflow: hidden;
   position: relative;
-  background: url(https://i.imgur.com/Zk6TR5k.jpg) no-repeat center center fixed;
-  background-size: cover;
+  background: #000;
+  cursor: none;
+  transform: scale(${DESKTOP_SCALE});
+  transform-origin: top left;
+  width: calc(100% / ${DESKTOP_SCALE});
+  height: calc(100% / ${DESKTOP_SCALE});
   animation: ${({ state }) => animation[state]} 5s forwards;
   *:not(input):not(textarea) {
     user-select: none;
+  }
+`;
+
+const DesktopLayer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+`;
+
+const BackgroundVideo = styled.video`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+`;
+
+const DesktopContextMenu = styled.div`
+  position: fixed;
+  min-width: 180px;
+  border: 1px solid #7f7f7f;
+  background: #f0f0f0;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35);
+  z-index: 20001;
+  padding: 2px;
+`;
+
+const DesktopContextMenuItem = styled.div`
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #111;
+  &:hover {
+    background: #0a64d6;
+    color: #fff;
   }
 `;
 

@@ -12,6 +12,7 @@ function Windows({
   onMinimize,
   onMaximize,
   focusedAppId,
+  desktopScale = 1,
 }) {
   return (
     <div style={{ position: 'relative', zIndex: 0 }}>
@@ -25,6 +26,7 @@ function Windows({
           onMouseUpMinimize={onMinimize}
           onMouseUpMaximize={onMaximize}
           isFocus={focusedAppId === app.id} // for styledWindow
+          desktopScale={desktopScale}
           {...app}
         />
       ))}
@@ -44,6 +46,7 @@ const Window = memo(function({
   defaultOffset,
   resizable,
   maximized,
+  desktopScale,
   component,
   zIndex,
   isFocus,
@@ -83,11 +86,13 @@ const Window = memo(function({
     resizeThreshold: 10,
   });
   let width, height, x, y;
+  const desktopWidth = windowWidth / desktopScale;
+  const desktopHeight = windowHeight / desktopScale;
   if (maximized) {
-    width = windowWidth + 6;
-    height = windowHeight - 24;
-    x = -3;
-    y = -3;
+    width = desktopWidth;
+    height = desktopHeight - 30;
+    x = 0;
+    y = 0;
   } else {
     width = size.width;
     height = size.height;
