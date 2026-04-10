@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>r3d1bruh's Dark Underground</title>
+    <style>
+        :root {
+            --bg-dark: #0f0f0f;
+            --panel-bg: #1a1a1a;
+            --text-color: #00ff41; /* Matrix Green */
+            --accent-color: #ff003c; /* Cyber Red */
+            --link-color: #00d4ff;
+            --border-light: #444;
+            --border-dark: #000;
+        }
+
+        body {
+            margin: 0;
+            padding: 10px;
+            background-color: #000;
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* The main container mimicking a site content area */
+        .geocities-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-dark);
+            border: 3px double var(--text-color);
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        /* Retro Marquee Styling */
+        .marquee-top {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 2px outset #ff4d4d;
+            margin-bottom: 20px;
+        }
+
+        /* Layout Grid - Mobile Responsive */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Sidebar */
+        .sidebar {
+            background-color: var(--panel-bg);
+            border: 3px inset var(--border-light);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            background: #333;
+            border: 2px solid var(--text-color);
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .stats-box {
+            text-align: left;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #aaa;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--text-color);
+        }
+
+        /* Main Links Content */
+        .content-area {
+            background-color: #000;
+            border: 3px inset var(--border-light);
+            padding: 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--link-color);
+            text-shadow: 2px 2px #000;
+            border-bottom: 2px solid var(--link-color);
+            padding-bottom: 5px;
+        }
+
+        /* The 88x31 GIF Grid */
+        .banner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+            gap: 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        /* Use this class for your GIFs */
+        .retro-button {
+            width: 88px;
+            border: 2px outset #555;
+            cursor: pointer;
+            transition: transform 0.1s;
+            display: block;
+        }
+
+        .retro-button:active {
+            border-style: inset;
+            transform: scale(0.95);
+        }
+
+        /* Footer Stuff */
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.7rem;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+        }
+
+        .hit-counter {
+            background: #000;
+            color: #f00;
+            padding: 2px 5px;
+            border: 1px solid #555;
+            font-family: 'Digital-7', monospace; /* Fallback to monospace */
+            font-size: 1.2rem;
+        }
+
+        .blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="geocities-container">
+    <marquee class="marquee-top">
+        +++ R3D1BRUH.LNK - THE DARK WEB PORTAL - BEST VIEWED IN 640x480 - NO COPS ALLOWED +++
+    </marquee>
+
+    <div class="layout-grid">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="profile-pic">
+                <!-- Replace with actual profile image -->
+                <img src="pfp.webp" alt="r3d1bruh" style="width:100%;height:100%">
+            </div>
+            <div style="font-weight: bold; color: #fff;">r3d1bruh</div>
+            <div class="blink" style="font-size: 0.7rem; color: #ff0;">[SYSOP]</div>
+            
+            <div class="stats-box">
+                <b>LOC:</b> UNDISCLOSED<br>
+                <b>OS:</b> WINDOWS XP LUNA (DARK)<br>
+                <b>CPU:</b> INTEL CORE i7<br>
+                <b>GEAR:</b> ThinkPad X1 Carbon<br>
+                <b>STATUS:</b> <span style="color: #0f0;">ENCRYPTED</span>
+            </div>
+
+            <br>
+            <img src="https://placehold.co/88x31/000/fff?text=MADE+WITH+VIM" class="retro-button" style="margin: 0 auto;">
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-area">
+            <h2 class="section-title">LINK EXCHANGE</h2>
+            <p style="font-size: 0.8rem; text-align: center;">Pick a banner to travel to my other nodes...</p>
+
+            <div class="banner-grid">
+                <!-- GITHUB -->
+                <a href="https://github.com/r3d1bruh" title="GitHub">
+                    <img src="github.gif" class="retro-button" alt="GitHub">
+                </a>
+                <!-- REDDIT -->
+                <a href="https://reddit.com/user/r3d1bruh" title="Reddit">
+                    <img src="reddit.gif" class="retro-button" alt="Reddit">
+                </a>
+                <!-- STEAM -->
+                <a href="https://steamcommunity.com/id/r3d1bruh" title="Steam">
+                    <img src="steam.gif" class="retro-button" alt="Steam">
+                </a>
+                <!-- DISCORD -->
+                <a href="#" title="Discord">
+                    <img src="discord.gif" class="retro-button" alt="Discord">
+                </a>
+                <!-- INSTAGRAM -->
+                <a href="https://instagram.com/r3d1bruh" title="Instagram">
+                    <img src="insta.gif" class="retro-button" alt="Instagram">
+                </a>
+                <!-- SNAPCHAT -->
+                <a href="https://snapchat.com/add/r3d1bruh" title="Snapchat">
+                    <img src="snapchat.gif" class="retro-button" alt="Snapchat">
+                </a>
+                <!-- TIKTOK -->
+                <a href="https://tiktok.com/@r3d1bruh" title="TikTok">
+                    <img src="tiktok.gif" class="retro-button" alt="TikTok">
+                </a>
+                <!-- X / TWITTER -->
+                <a href="https://twitter.com/r3d1bruh" title="X">
+                    <img src="x.gif" class="retro-button" alt="X">
+                </a>
+                <!-- LINKEDIN -->
+                <a href="https://linkedin.com/in/r3d1bruh" title="LinkedIn">
+                    <img src="https://placehold.co/88x31/0077b5/fff?text=LNKEDIN.GIF" class="retro-button" alt="LinkedIn">
+                </a>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <p style="color: var(--accent-color); font-weight: bold;" class="blink">!!! UNDER CONSTRUCTION !!!</p>
+                <img src="https://placehold.co/150x50/333/ff0?text=🚧+WORKING+🚧" alt="Working">
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        VISITOR COUNT: <span class="hit-counter">001337</span><br>
+        <p>&copy; 1998-2024 r3d1bruh . ALL RIGHTS RESERVED . STAY RAD</p>
+    </div>
+</div>
+
+</body>
+</html>

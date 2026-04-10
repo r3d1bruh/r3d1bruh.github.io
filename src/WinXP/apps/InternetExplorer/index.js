@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { WindowDropDowns, Google } from 'components';
+import { WindowDropDowns } from 'components';
 import dropDownData from './dropDownData';
 import ie from 'assets/windowsIcons/ie.gif';
 import printer from 'assets/windowsIcons/17(32x32).png';
@@ -13,7 +13,7 @@ import back from 'assets/windowsIcons/back.png';
 import earth from 'assets/windowsIcons/earth.png';
 import edit from 'assets/windowsIcons/edit.png';
 import forward from 'assets/windowsIcons/forward.png';
-import history from 'assets/windowsIcons/history.png';
+import historyIcon from 'assets/windowsIcons/history.png';
 import home from 'assets/windowsIcons/home.png';
 import mail from 'assets/windowsIcons/mail.png';
 import msn from 'assets/windowsIcons/msn.png';
@@ -22,33 +22,161 @@ import stop from 'assets/windowsIcons/stop.png';
 import windows from 'assets/windowsIcons/windows.png';
 import dropdown from 'assets/windowsIcons/dropdown.png';
 
+const resolveLocalPage = relativePath => {
+  const basePrefix = window.location.pathname.includes('/build/') ? '../' : './';
+  return `${basePrefix}${relativePath}`;
+};
+
+function normalizeAddress(value) {
+  const input = (value || '').trim();
+  if (!input) return resolveLocalPage('Google.html');
+
+  const keywordRouteMap = {
+    dora: resolveLocalPage('dora/index.html'),
+    doraverse: resolveLocalPage('dora/doraverse.html'),
+    links: resolveLocalPage('index.html'),
+  };
+  const keywordRoute = keywordRouteMap[input.toLowerCase()];
+  if (keywordRoute) return keywordRoute;
+
+  if (/^https?:\/\//i.test(input)) return input;
+  if (input.startsWith('./') || input.startsWith('../') || input.startsWith('/')) {
+    return input;
+  }
+
+  if (/^[a-z0-9-]+(\.[a-z0-9-]+)+([/:?#].*)?$/i.test(input)) {
+    return `https://${input}`;
+  }
+
+  return `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+}
+
+function isExternalUrl(url) {
+  return /^https?:\/\//i.test(url) && !url.startsWith(window.location.origin);
+}
+
+function shouldOpenDirectly(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return [
+      'facebook.com',
+      'www.facebook.com',
+      'instagram.com',
+      'www.instagram.com',
+      'x.com',
+      'www.x.com',
+      'twitter.com',
+      'www.twitter.com',
+      'tiktok.com',
+      'www.tiktok.com',
+      'discord.com',
+      'www.discord.com',
+    ].includes(host);
+  } catch {
+    return false;
+  }
+}
+
 function InternetExplorer({ onClose }) {
-  const [state, setState] = useState({
-    route: 'main',
-    query: '',
-  });
-  function onSearch(str) {
-    if (str.length) {
-      setState({
-        route: 'search',
-        query: str,
-      });
+  const [history, setHistory] = useState([resolveLocalPage('Google.html')]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const [addressInput, setAddressInput] = useState(resolveLocalPage('Google.html'));
+  const [frameReloadKey, setFrameReloadKey] = useState(0);
+  const [frameLoaded, setFrameLoaded] = useState(true);
+  const [fallbackNotice, setFallbackNotice] = useState('');
+  const fallbackTimeoutRef = useRef(null);
+
+  const currentUrl = history[historyIndex] || resolveLocalPage('Google.html');
+
+  function navigateTo(value) {
+    const nextUrl = normalizeAddress(value);
+    if (isExternalUrl(nextUrl) && shouldOpenDirectly(nextUrl)) {
+      window.open(nextUrl, '_blank', 'noopener,noreferrer');
+      setAddressInput(nextUrl);
+      setFallbackNotice('Opened in a new tab (site blocks iframe embedding).');
+      return;
+    }
+    const nextHistory = [...history.slice(0, historyIndex + 1), nextUrl];
+    setHistory(nextHistory);
+    setHistoryIndex(nextHistory.length - 1);
+    setAddressInput(nextUrl);
+    setFallbackNotice('');
+    setFrameLoaded(!isExternalUrl(nextUrl));
+  }
+
+  function goBack() {
+    if (historyIndex === 0) return;
+    const nextIndex = historyIndex - 1;
+    setHistoryIndex(nextIndex);
+    setAddressInput(history[nextIndex]);
+  }
+
+  function goForward() {
+    if (historyIndex >= history.length - 1) return;
+    const nextIndex = historyIndex + 1;
+    setHistoryIndex(nextIndex);
+    setAddressInput(history[nextIndex]);
+  }
+
+  function onAddressKeyDown(e) {
+    if (e.key !== 'Enter') return;
+    navigateTo(addressInput);
+  }
+
+  function onRefresh() {
+    setFrameReloadKey(key => key + 1);
+    setFallbackNotice('');
+    setFrameLoaded(!isExternalUrl(currentUrl));
+  }
+
+  function onFrameLoad() {
+    setFrameLoaded(true);
+    if (fallbackTimeoutRef.current) {
+      clearTimeout(fallbackTimeoutRef.current);
+      fallbackTimeoutRef.current = null;
     }
   }
+
+  useEffect(() => {
+    if (!isExternalUrl(currentUrl)) {
+      setFallbackNotice('');
+      return;
+    }
+
+    if (fallbackTimeoutRef.current) {
+      clearTimeout(fallbackTimeoutRef.current);
+      fallbackTimeoutRef.current = null;
+    }
+
+    fallbackTimeoutRef.current = setTimeout(() => {
+      if (!frameLoaded) {
+        window.open(currentUrl, '_blank', 'noopener,noreferrer');
+        setFallbackNotice('This site blocks embedding. Opened in a new tab.');
+      }
+    }, 1800);
+
+    return () => {
+      if (fallbackTimeoutRef.current) {
+        clearTimeout(fallbackTimeoutRef.current);
+        fallbackTimeoutRef.current = null;
+      }
+    };
+  }, [currentUrl, frameLoaded]);
+
   function goMain() {
-    setState({
-      route: 'main',
-      query: '',
-    });
+    navigateTo(resolveLocalPage('Google.html'));
   }
+
   function onClickOptionItem(item) {
     switch (item) {
       case 'Close':
         onClose();
         break;
       case 'Home Page':
-      case 'Back':
         goMain();
+        break;
+      case 'Back':
+        goBack();
         break;
       default:
     }
@@ -67,23 +195,28 @@ function InternetExplorer({ onClose }) {
       </section>
       <section className="ie__function_bar">
         <div
-          onClick={goMain}
+          onClick={goBack}
           className={`ie__function_bar__button${
-            state.route === 'main' ? '--disable' : ''
+            historyIndex === 0 ? '--disable' : ''
           }`}
         >
           <img className="ie__function_bar__icon" src={back} alt="" />
           <span className="ie__function_bar__text">Back</span>
           <div className="ie__function_bar__arrow" />
         </div>
-        <div className="ie__function_bar__button--disable">
+        <div
+          onClick={goForward}
+          className={`ie__function_bar__button${
+            historyIndex >= history.length - 1 ? '--disable' : ''
+          }`}
+        >
           <img className="ie__function_bar__icon" src={forward} alt="" />
           <div className="ie__function_bar__arrow" />
         </div>
         <div className="ie__function_bar__button">
           <img className="ie__function_bar__icon--margin-1" src={stop} alt="" />
         </div>
-        <div className="ie__function_bar__button">
+        <div className="ie__function_bar__button" onClick={onRefresh}>
           <img
             className="ie__function_bar__icon--margin-1"
             src={refresh}
@@ -111,7 +244,7 @@ function InternetExplorer({ onClose }) {
           <span className="ie__function_bar__text">Favorites</span>
         </div>
         <div className="ie__function_bar__button">
-          <img className="ie__function_bar__icon" src={history} alt="" />
+          <img className="ie__function_bar__icon" src={historyIcon} alt="" />
         </div>
         <div className="ie__function_bar__separate" />
         <div className="ie__function_bar__button">
@@ -136,25 +269,25 @@ function InternetExplorer({ onClose }) {
         <div className="ie__address_bar__title">Address</div>
         <div className="ie__address_bar__content">
           <img src={ie} alt="ie" className="ie__address_bar__content__img" />
-          <div className="ie__address_bar__content__text">
-            {`https://bing.com.tw${
-              state.route === 'search'
-                ? `/search?q=${encodeURIComponent(state.query)}`
-                : ''
-            }`}
-          </div>
+          <input
+            className="ie__address_bar__input"
+            value={addressInput}
+            onChange={e => setAddressInput(e.target.value)}
+            onKeyDown={onAddressKeyDown}
+            aria-label="Address bar"
+          />
           <img
             src={dropdown}
             alt="dropdown"
             className="ie__address_bar__content__img"
           />
         </div>
-        <div className="ie__address_bar__go">
+        <div className="ie__address_bar__go" onClick={() => navigateTo(addressInput)}>
           <img className="ie__address_bar__go__img" src={go} alt="go" />
           <span className="ie__address_bar__go__text">Go</span>
         </div>
         <div className="ie__address_bar__separate" />
-        <div className="ie__address_bar__links">
+        <div className="ie__address_bar__links" onClick={() => navigateTo('links')}>
           <span className="ie__address_bar__links__text">Links</span>
           <img
             className="ie__address_bar__links__img"
@@ -164,12 +297,21 @@ function InternetExplorer({ onClose }) {
         </div>
       </section>
       <div className="ie__content">
+        {fallbackNotice && (
+          <div className="ie__fallback_notice">{fallbackNotice}</div>
+        )}
         <div className="ie__content__inner">
-          <Google
-            route={state.route}
-            query={state.query}
-            onSearch={onSearch}
-            goMain={goMain}
+          <iframe
+            key={`${currentUrl}::${frameReloadKey}`}
+            src={currentUrl}
+            className="ie__content__frame"
+            title="Internet Explorer Content"
+            role="application"
+            width="100%"
+            height="100%"
+            onLoad={onFrameLoad}
+            style={{ border: 'none' }}
+            loading="lazy"
           />
         </div>
       </div>
@@ -347,13 +489,18 @@ const Div = styled.div`
     &__img:last-child:hover {
       filter: brightness(1.1);
     }
-    &__text {
-      position: absolute;
-      white-space: nowrap;
-      left: 16px;
-      right: 17px;
-      overflow: hidden;
-    }
+  }
+  .ie__address_bar__input {
+    position: absolute;
+    left: 16px;
+    right: 17px;
+    top: 0;
+    bottom: 0;
+    border: none;
+    outline: none;
+    font-size: 11px;
+    padding: 0;
+    color: #111;
   }
   .ie__address_bar__go {
     display: flex;
@@ -392,18 +539,39 @@ const Div = styled.div`
   }
   .ie__content {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     padding-left: 1px;
     border-left: 1px solid #6f6f6f;
     background-color: #f1f1f1;
     position: relative;
+    min-height: 0;
+  }
+  .ie__fallback_notice {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    z-index: 3;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #ceb76b;
+    background: #fff8d5;
+    color: #6b4f00;
+    border-radius: 2px;
   }
   .ie__content__inner {
     position: relative;
-    min-height: 800px;
-    min-width: 800px;
     width: 100%;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+  .ie__content__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
   }
   .ie__footer {
     height: 20px;
