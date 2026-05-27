@@ -48,13 +48,25 @@
         /* Layout Grid - Mobile Responsive */
         .layout-grid {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
             gap: 20px;
+            align-items: start;
+            transition: grid-template-columns 220ms ease, column-gap 220ms ease;
+        }
+
+        .layout-grid.terminal-layout {
+            grid-template-columns: minmax(120px, 160px) minmax(0, 1.8fr);
+            gap: 10px;
         }
 
         @media (max-width: 650px) {
             .layout-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .layout-grid.terminal-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
         }
 
@@ -63,7 +75,7 @@
             background-color: var(--panel-bg);
             border: 3px inset var(--border-light);
             padding: 15px;
-            text-align: center;
+            text-align: left;
         }
 
         .profile-pic {
@@ -73,6 +85,10 @@
             border: 2px solid var(--text-color);
             margin-bottom: 10px;
             display: inline-block;
+        }
+        .profile-name {
+            width: 120px;
+            text-align: center;
         }
 
         .stats-box {
@@ -182,8 +198,8 @@
         }
 
         /* Sidebar navigation buttons */
-        .sidebar-nav { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
-        .sidebar-nav button { background: transparent; border: 1px solid rgba(205,166,255,0.08); color: var(--link-color); padding: 6px 8px; border-radius: 4px; cursor: pointer; font-weight:700 }
+        .sidebar-nav { display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:10px; text-align:left; }
+        .sidebar-nav button { background: transparent; border: 1px solid rgba(205,166,255,0.08); color: var(--link-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight:700; text-align:left }
         .sidebar-nav button.active { background: rgba(160,32,240,0.95); color: #fff; border-color: rgba(160,32,240,0.6); }
 
         /* Terminal mode appearance for the right-side content area */
@@ -292,13 +308,12 @@
                 <!-- Replace with actual profile image -->
                 <img src="pfp.webp" alt="r3d1bruh" style="width:100%;height:100%">
             </div>
-            <div style="font-weight: bold; color: #fff;">r3d1bruh</div>
+            <div class="profile-name" style="font-weight: bold; color: #fff;">r3d1bruh</div>
             
                         <div class="stats-box">
-                            <div style="font-size:0.9rem; color:#ccc">System: <strong>Windows</strong></div>
                             <div class="sidebar-nav" aria-label="page navigation">
                                 <button id="nav-link-exchange" class="active" aria-controls="link-exchange">Link Exchange</button>
-                                <button id="nav-pc-specs" aria-controls="pc-specs">PC Specs</button>
+                                <button id="nav-pc-specs" aria-controls="pc-specs">Neofetch</button>
                             </div>
                         </div>
 
@@ -308,7 +323,6 @@
         <!-- Main Content -->
         <div class="content-area">
             <h2 class="section-title">LINK EXCHANGE</h2>
-            <p style="font-size: 0.8rem; text-align: center;">Toggle between the link exchange and PC specs below.</p>
 
             <div id="link-exchange" class="pane">
                 <div style="height:12px"></div>
@@ -412,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const navLink = document.getElementById('nav-link-exchange');
     const navPC = document.getElementById('nav-pc-specs');
     const content = document.querySelector('.content-area');
+    const layout = document.querySelector('.layout-grid');
     const paneLink = document.getElementById('link-exchange');
     const panePC = document.getElementById('pc-specs');
     function setActive(b){ [navLink,navPC].forEach(x=> x && x.classList.remove('active')); if (b) b.classList.add('active'); }
@@ -420,11 +435,13 @@ document.addEventListener('DOMContentLoaded', function(){
             paneLink && (paneLink.style.display = 'block');
             panePC && (panePC.style.display = 'none');
             content && content.classList.remove('terminal-mode');
+                layout && layout.classList.remove('terminal-layout');
             setActive(navLink);
         } else {
             paneLink && (paneLink.style.display = 'none');
             panePC && (panePC.style.display = 'block');
             content && content.classList.add('terminal-mode');
+                layout && layout.classList.add('terminal-layout');
             setActive(navPC);
         }
     }
