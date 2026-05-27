@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>r3d1bruh</title>
+    <link href="https://fonts.cdnfonts.com/css/cascadia-mono" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0b0216; /* very dark purple */
@@ -103,30 +104,82 @@
         .pane.hidden { display:none; }
         details { background: rgba(15,6,20,0.35); border: 1px solid rgba(205,166,255,0.08); padding: 8px; border-radius: 6px; margin: 8px 0; }
         summary { cursor: pointer; font-weight: 700; color: var(--link-color); list-style: none; }
-        .neofetch { background: #0a0a0a; color: #d7d7d7; padding: 10px; border-radius: 4px; font-family: 'Courier New', monospace; font-size:0.36rem; line-height:1.15; }
+        .neofetch {
+            background: #0b0b0b;
+            color: #d7d7d7;
+            padding: 12px 14px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.15;
+            overflow: hidden;
+        }
+        .neofetch, .neofetch * {
+            font-family: 'Cascadia Mono', 'Cascadia Code', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.15;
+        }
         .neofetch-shell { width: 100%; }
-        .neofetch-cmd, .neofetch-prompt { color: #d7d7d7; font-size: 0.5rem; line-height: 1.15; }
-        .neofetch-cmd { margin-bottom: 6px; }
+        .neofetch-cmd, .neofetch-prompt {
+            color: #d7d7d7;
+            white-space: pre;
+            word-break: normal;
+        }
+        .neofetch-cmd { margin-bottom: 10px; }
+        .cmd-name { color: #42f15f; }
         .neofetch-prompt { margin-top: 10px; }
-        .neofetch-grid { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.2fr); gap: 20px; align-items: start; }
-        .neofetch-logo { margin: 0; color: #39a0e7; font-size: 0.475rem; line-height: 1.08; white-space: pre; }
-        .neofetch-info { color: #d7d7d7; font-size: 0.475rem; line-height: 1.25; }
-        .neofetch-title { font-size: 0.55rem; line-height: 1.1; margin-bottom: 4px; }
-        .neofetch-divider { color: #d7d7d7; margin-bottom: 4px; }
-        .neofetch-row { display: flex; gap: 8px; align-items: baseline; margin: 0; }
-        .neofetch-label { color: #39a0e7; min-width: 92px; flex: 0 0 auto; }
-        .neofetch-value { color: #d7d7d7; flex: 1 1 auto; }
-        .neofetch-bars { margin-top: 18px; }
-        .neofetch-bar-row { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
-        .neofetch-bar-label { color: #39a0e7; min-width: 70px; }
+        .neofetch-grid {
+            display: grid;
+            grid-template-columns: minmax(250px, 0.95fr) minmax(0, 1.25fr);
+            gap: 14px;
+            align-items: start;
+        }
+        .neofetch-logo {
+            margin: 0;
+            white-space: pre;
+            line-height: 1.0;
+        }
+        .logo-red { color: #ff5c6a; }
+        .logo-pink { color: #ff4fc7; }
+        .logo-blue { color: #4da7ff; }
+        .logo-green { color: #2ddc4a; }
+        .logo-yellow { color: #efdf67; }
+        .logo-gray { color: #dadada; }
+        .neofetch-info {
+            color: #d7d7d7;
+        }
+        .neofetch-title {
+            color: #ff5c6a;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-color: #ff5c6a;
+            text-underline-offset: 2px;
+            margin-bottom: 4px;
+        }
+        .neofetch-divider { color: #d7d7d7; margin-bottom: 6px; }
+        .neofetch-row {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            margin: 0;
+        }
+        .neofetch-label { color: #2ddc4a; min-width: 92px; flex: 0 0 auto; }
+        .neofetch-value { color: #d7d7d7; }
+        .neofetch-bars { margin-top: 12px; }
+        .neofetch-bars { display: none !important; }
+        .neofetch-bar-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+        .neofetch-bar-label { color: #2ddc4a; min-width: 55px; flex: 0 0 auto; }
         .neofetch-bar { display: inline-flex; gap: 0; }
-        .neofetch-bar span { width: 18px; height: 18px; display: inline-block; }
-        .neofetch-palette { display: flex; justify-content: center; gap: 0; margin-top: 14px; }
-        .neofetch-palette span { width: 55px; height: 26px; display: inline-block; }
+        .neofetch-bar span { width: 12px; height: 12px; display: inline-block; }
+        .neofetch-palette { display: flex; justify-content: flex-start; gap: 0; margin-top: 12px; }
+        .neofetch-palette span { width: 30px; height: 18px; display: inline-block; }
         .neofetch-palette .topgap { margin-top: 0; }
-        .blue { color: #39a0e7; }
+        .blue { color: #4da7ff; }
         .gray { color: #d7d7d7; }
-        @media (max-width: 760px) { .neofetch-grid { grid-template-columns: 1fr; } .neofetch-logo { font-size: 0.475rem; } }
+        @media (max-width: 760px) {
+            .neofetch-grid { grid-template-columns: 1fr; }
+            .neofetch-logo { font-size: 13px; }
+        }
 
         /* Sidebar navigation buttons */
         .sidebar-nav { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
@@ -302,27 +355,26 @@
 
             <div id="pc-specs" class="pane neofetch" style="display:none;">
                 <div class="neofetch-shell">
-                    <div class="neofetch-cmd">C:\Users\Krane>neofetch</div>
+                    <div class="neofetch-cmd"><span>C:\Users\Krane&gt;</span> <span class="cmd-name">neofetch</span></div>
                     <div class="neofetch-grid">
-                        <pre class="neofetch-logo">llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll
-llllllllllllllll   llllllllllllllll</pre>
+                        <pre class="neofetch-logo"><span class="logo-red">        ,.=:!!t3Z3z.,</span>
+<span class="logo-red">       :tt:::tt333EE3</span>
+<span class="logo-red">       Et:::ztt33EEEL @Ee.,      ..,</span>
+<span class="logo-red">      ;tt:::tt333EE7 ;EEEEEEttttt33#</span>
+<span class="logo-green">     :Et:::zt333EEQ. $EEEEEttttt33QL</span>
+<span class="logo-green">     it::::tt333EEF @EEEEEEttttt33F</span>
+<span class="logo-green">    ;3=*^```"*4EEV :EEEEEEttttt33@.</span>
+<span class="logo-green">    ,.=::::!t=., ` @EEEEEEtttz33QF</span>
+<span class="logo-blue">   ;::::::::zt33)   "4EEEtttji3P*</span>
+<span class="logo-blue">  :t::::::::tt33.:Z3z..  `` ,..g.</span>
+<span class="logo-blue">  i::::::::zt33F AEEEtttt::::ztF</span>
+<span class="logo-blue"> ;:::::::::t33V ;EEEttttt::::t3</span>
+<span class="logo-yellow"> E::::::::zt33L @EEEtttt::::z3F</span>
+<span class="logo-yellow">{3=*^```"*4E3) ;EEEtttt:::::tZ`</span>
+<span class="logo-yellow">             ` :EEEEtttt::::z7</span>
+<span class="logo-gray">                 "VEzjt:;;z>*`</span></pre>
                         <div class="neofetch-info">
-                            <div class="neofetch-title"><span class="blue">Krane</span><span class="gray">@DESKTOP-I83AHIP</span></div>
+                            <div class="neofetch-title">Krane@DESKTOP-I83AHIP</div>
                             <div class="neofetch-divider">--------------</div>
                             <div class="neofetch-row"><span class="neofetch-label">OS:</span><span class="neofetch-value">Windows 11</span></div>
                             <div class="neofetch-row"><span class="neofetch-label">Build:</span><span class="neofetch-value">25H2 (26200)</span></div>
@@ -340,7 +392,7 @@ llllllllllllllll   llllllllllllllll</pre>
                         <div class="neofetch-bar-row"><span class="neofetch-bar-label">Disk%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
                         <div class="neofetch-palette"><span style="background:#9b9b9b"></span><span style="background:#0b54f4"></span><span style="background:#20b10d"></span><span style="background:#4da7ff"></span><span style="background:#d71b2a"></span><span style="background:#b315b3"></span><span style="background:#c8a000"></span><span style="background:#dadada"></span></div>
                     </div>
-                    <div class="neofetch-prompt">C:\Users\Krane&gt;</div>
+                    <div class="neofetch-prompt">PS C:\Users\Krane\Desktop&gt;</div>
                 </div>
             </div>
 
