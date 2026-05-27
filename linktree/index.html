@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>r3d1bruh's Dark Underground</title>
+    <title>r3d1bruh</title>
     <style>
         :root {
             --bg-dark: #0b0216; /* very dark purple */
@@ -25,6 +25,46 @@
         .stats-box { text-align:left; font-size:0.8rem; line-height:1.5; color:#aaa; margin-top:15px; padding-top:10px; border-top:1px dashed var(--text-color); }
         .content-area { background:var(--panel-bg); border:3px inset var(--border-light); padding:15px; }
         .section-title { text-align:center; color:var(--link-color); text-shadow:2px 2px #000; border-bottom:2px solid var(--link-color); padding-bottom:5px; }
+        details { background: rgba(15,6,20,0.35); border: 1px solid rgba(205,166,255,0.08); padding: 8px; border-radius: 6px; margin: 8px 0; }
+        summary { cursor: pointer; font-weight: 700; color: var(--link-color); list-style: none; }
+        .neofetch { background: #0a0a0a; color: #d7d7d7; padding: 10px; border-radius: 4px; font-family: 'Courier New', monospace; font-size:0.36rem; line-height:1.15; }
+        .neofetch-shell { width: 100%; }
+        .neofetch-cmd, .neofetch-prompt { color: #d7d7d7; font-size: 0.5rem; line-height: 1.15; }
+        .neofetch-cmd { margin-bottom: 6px; }
+        .neofetch-prompt { margin-top: 10px; }
+        .neofetch-grid { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.2fr); gap: 20px; align-items: start; }
+        .neofetch-logo { margin: 0; color: #39a0e7; font-size: 0.475rem; line-height: 1.08; white-space: pre; }
+        .neofetch-info { color: #d7d7d7; font-size: 0.475rem; line-height: 1.25; }
+        .neofetch-title { font-size: 0.55rem; line-height: 1.1; margin-bottom: 4px; }
+        .neofetch-divider { color: #d7d7d7; margin-bottom: 4px; }
+        .neofetch-row { display: flex; gap: 8px; align-items: baseline; margin: 0; }
+        .neofetch-label { color: #39a0e7; min-width: 92px; flex: 0 0 auto; }
+        .neofetch-value { color: #d7d7d7; flex: 1 1 auto; }
+        .neofetch-bars { margin-top: 18px; }
+        .neofetch-bar-row { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+        .neofetch-bar-label { color: #39a0e7; min-width: 70px; }
+        .neofetch-bar { display: inline-flex; gap: 0; }
+        .neofetch-bar span { width: 18px; height: 18px; display: inline-block; }
+        .neofetch-palette { display: flex; justify-content: center; gap: 0; margin-top: 14px; }
+        .neofetch-palette span { width: 55px; height: 26px; display: inline-block; }
+        .blue { color: #39a0e7; }
+        .gray { color: #d7d7d7; }
+        @media (max-width: 760px) { .neofetch-grid { grid-template-columns: 1fr; } .neofetch-logo { font-size: 0.475rem; } }
+
+        .sidebar-nav { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+        .sidebar-nav button { background: transparent; border: 1px solid rgba(205,166,255,0.08); color: var(--link-color); padding: 6px 8px; border-radius: 4px; cursor: pointer; font-weight:700 }
+        .sidebar-nav button.active { background: rgba(160,32,240,0.95); color: #fff; border-color: rgba(160,32,240,0.6); }
+
+        .content-area.terminal-mode { background: #07020a; color: #e9dfff; border: 2px solid rgba(120,24,140,0.6); box-shadow: inset 0 0 30px rgba(160,32,240,0.08); font-family: 'Courier New', monospace; }
+        .content-area.terminal-mode .section-title { color: #d8b8ff; }
+        /* When showing PC specs, hide the link-exchange header and banners */
+        .content-area.terminal-mode .section-title,
+        .content-area.terminal-mode p,
+        .content-area.terminal-mode .banner-grid,
+        .content-area.terminal-mode .banner-grid * {
+            display: none !important;
+        }
+        .content-area.terminal-mode #pc-specs { display: block !important; }
         .banner-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:10px; justify-items:center; margin-top:20px; }
         .retro-button { width:88px; border:2px outset #555; cursor:pointer; transition:transform .1s; display:block; }
         .retro-button:active { border-style:inset; transform:scale(.95); }
@@ -72,39 +112,108 @@
         <div class="sidebar">
             <div class="avatar-frame profile-pic"><img src="/public/linktree/pfp.webp" alt="r3d1bruh" style="width:100%;height:100%"></div>
             <div style="font-weight:bold;color:#fff">r3d1bruh</div>
-            <div class="stats-box">
-                <details>
-                    <summary style="cursor:pointer; font-weight:bold;">PC Specs</summary>
-                    <ul style="list-style:none; padding:0; margin:8px 0 0 0; color:#ccc; font-size:0.9rem">
-                        <li><strong>Processor (CPU):</strong> Intel Core i9-10859K — 10th Gen, unlocked desktop processor</li>
-                        <li><strong>Graphics Card (GPU):</strong> MSI GeForce RTX 5070 Ti</li>
-                        <li><strong>Memory (RAM):</strong> 32 GB DDR4 (16 GB × 2 sticks), dual-channel</li>
-                        <li><strong>Motherboard:</strong> Gigabyte Z590 UD — ATX form factor, LGA1200 socket</li>
-                        <li><strong>Power Supply Unit (PSU):</strong> Acer AC-1000 — 1000W, 80 Plus Gold certified, fully modular</li>
-                        <li><strong>OS:</strong> Windows 11-</li>
-                    </ul>
-                </details>
-            </div>
+                        <div class="stats-box">
+                            <div style="font-size:0.9rem; color:#ccc">System: <strong>Windows</strong></div>
+                            <div class="sidebar-nav" aria-label="page navigation">
+                                <button id="nav-link-exchange" class="active" aria-controls="link-exchange">Link Exchange</button>
+                                <button id="nav-pc-specs" aria-controls="pc-specs">PC Specs</button>
+                            </div>
+                        </div>
             
         </div>
         <div class="content-area">
             <h2 class="section-title">LINK EXCHANGE</h2>
-            <p style="font-size:.8rem;text-align:center">Pick a banner to travel to my other nodes...</p>
-            <div class="banner-grid">
-                <a class="gif-wrap" href="https://github.com/r3d1bruh" title="GitHub"><img src="/public/linktree/github.gif" class="retro-button" alt="GitHub"></a>
-                <a class="gif-wrap" href="https://reddit.com/user/r3d1bruh" title="Reddit"><img src="/public/linktree/reddit.gif" class="retro-button" alt="Reddit"></a>
-                <a class="gif-wrap" href="https://steamcommunity.com/id/r3d1bruh" title="Steam"><img src="/public/linktree/steam.gif" class="retro-button" alt="Steam"></a>
-                <a class="gif-wrap" href="#" title="Discord"><img src="/public/linktree/discord.gif" class="retro-button" alt="Discord"></a>
-                <a class="gif-wrap" href="https://instagram.com/r3d1bruh" title="Instagram"><img src="/public/linktree/insta.gif" class="retro-button" alt="Instagram"></a>
-                <a class="gif-wrap" href="https://snapchat.com/add/r3d1bruh" title="Snapchat"><img src="/public/linktree/snapchat.gif" class="retro-button" alt="Snapchat"></a>
-                <a class="gif-wrap" href="https://tiktok.com/@r3d1bruh" title="TikTok"><img src="/public/linktree/tiktok.gif" class="retro-button" alt="TikTok"></a>
-                <a class="gif-wrap" href="https://twitter.com/r3d1bruh" title="X"><img src="/public/linktree/x.gif" class="retro-button" alt="X"></a>
-                <a class="gif-wrap" href="https://linkedin.com/in/r3d1bruh" title="LinkedIn"><img src="/public/linktree/linkedin.gif" class="retro-button" alt="LinkedIn"></a>
+            <p style="font-size:.8rem;text-align:center">Toggle between the link exchange and PC specs below.</p>
+
+            <div id="link-exchange" class="pane">
+                <div style="height:12px"></div>
+
+                <div class="banner-grid">
+                    <a class="gif-wrap" href="https://github.com/r3d1bruh" title="GitHub"><img src="/public/linktree/github.gif" class="retro-button" alt="GitHub"></a>
+                    <a class="gif-wrap" href="https://reddit.com/user/r3d1bruh" title="Reddit"><img src="/public/linktree/reddit.gif" class="retro-button" alt="Reddit"></a>
+                    <a class="gif-wrap" href="https://steamcommunity.com/id/r3d1bruh" title="Steam"><img src="/public/linktree/steam.gif" class="retro-button" alt="Steam"></a>
+                    <a class="gif-wrap" href="#" title="Discord"><img src="/public/linktree/discord.gif" class="retro-button" alt="Discord"></a>
+                    <a class="gif-wrap" href="https://instagram.com/r3d1bruh" title="Instagram"><img src="/public/linktree/insta.gif" class="retro-button" alt="Instagram"></a>
+                    <a class="gif-wrap" href="https://snapchat.com/add/r3d1bruh" title="Snapchat"><img src="/public/linktree/snapchat.gif" class="retro-button" alt="Snapchat"></a>
+                    <a class="gif-wrap" href="https://tiktok.com/@r3d1bruh" title="TikTok"><img src="/public/linktree/tiktok.gif" class="retro-button" alt="TikTok"></a>
+                    <a class="gif-wrap" href="https://twitter.com/r3d1bruh" title="X"><img src="/public/linktree/x.gif" class="retro-button" alt="X"></a>
+                    <a class="gif-wrap" href="https://linkedin.com/in/r3d1bruh" title="LinkedIn"><img src="/public/linktree/linkedin.gif" class="retro-button" alt="LinkedIn"></a>
+                </div>
+            </div>
+
+            <div id="pc-specs" class="pane neofetch" style="display:none;">
+                <div class="neofetch-shell">
+                    <div class="neofetch-cmd">C:\Users\Krane>neofetch</div>
+                    <div class="neofetch-grid">
+                        <pre class="neofetch-logo">llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll
+llllllllllllllll   llllllllllllllll</pre>
+                        <div class="neofetch-info">
+                            <div class="neofetch-title"><span class="blue">Krane</span><span class="gray">@DESKTOP-I83AHIP</span></div>
+                            <div class="neofetch-divider">--------------</div>
+                            <div class="neofetch-row"><span class="neofetch-label">OS:</span><span class="neofetch-value">Windows 11</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Build:</span><span class="neofetch-value">25H2 (26200)</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Uptime:</span><span class="neofetch-value">2 days, 23 hours, 5 minutes</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Resolution:</span><span class="neofetch-value">1920x1080 @60Hz</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Terminal:</span><span class="neofetch-value">Administrator: Command Prompt - neofetch</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">CPU:</span><span class="neofetch-value">Intel(R) Core(TM) i7-10610U CPU @ 1.80GHz</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">GPU:</span><span class="neofetch-value">Intel(R) UHD Graphics</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Memory:</span><span class="neofetch-value">11203 MB / 16102 MB (69% in use)</span></div>
+                            <div class="neofetch-row"><span class="neofetch-label">Disk:</span><span class="neofetch-value">C:\ 385.02 GB (19.34 GB free)</span></div>
+                        </div>
+                    </div>
+                    <div class="neofetch-bars">
+                        <div class="neofetch-bar-row"><span class="neofetch-bar-label">Mem%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
+                        <div class="neofetch-bar-row"><span class="neofetch-bar-label">Disk%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
+                        <div class="neofetch-palette"><span style="background:#9b9b9b"></span><span style="background:#0b54f4"></span><span style="background:#20b10d"></span><span style="background:#4da7ff"></span><span style="background:#d71b2a"></span><span style="background:#b315b3"></span><span style="background:#c8a000"></span><span style="background:#dadada"></span></div>
+                    </div>
+                    <div class="neofetch-prompt">C:\Users\Krane&gt;</div>
+                </div>
             </div>
             
         </div>
     </div>
     <div class="footer">VISITOR COUNT: <span class="hit-counter">001337</span><br><p>&copy; 1998-2024 r3d1bruh . ALL RIGHTS RESERVED . STAY RAD</p></div>
 </div>
-</body>
-</html>
+    </body>
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const navLink = document.getElementById('nav-link-exchange');
+        const navPC = document.getElementById('nav-pc-specs');
+        const content = document.querySelector('.content-area');
+        const paneLink = document.getElementById('link-exchange');
+        const panePC = document.getElementById('pc-specs');
+        function setActive(b){ [navLink,navPC].forEach(x=> x && x.classList.remove('active')); if (b) b.classList.add('active'); }
+        function showPane(pane){
+            if (pane === 'link'){
+                paneLink && (paneLink.style.display = 'block');
+                panePC && (panePC.style.display = 'none');
+                content && content.classList.remove('terminal-mode');
+                setActive(navLink);
+            } else {
+                paneLink && (paneLink.style.display = 'none');
+                panePC && (panePC.style.display = 'block');
+                content && content.classList.add('terminal-mode');
+                setActive(navPC);
+            }
+        }
+        if (navLink) navLink.addEventListener('click', ()=>{ showPane('link'); paneLink && paneLink.scrollIntoView({behavior:'smooth', block:'center'}); });
+        if (navPC) navPC.addEventListener('click', ()=>{ showPane('pc'); panePC && panePC.scrollIntoView({behavior:'smooth', block:'center'}); });
+        showPane('link');
+    });
+    </script>
+    </html>
