@@ -26,7 +26,8 @@
 
         /* The main container mimicking a site content area */
         .geocities-container {
-            max-width: 800px;
+            max-width: 1400px;
+            width: calc(100% - 40px);
             margin: 0 auto;
             background-color: var(--bg-dark);
             border: 3px double var(--text-color);
@@ -48,14 +49,14 @@
         /* Layout Grid - Mobile Responsive */
         .layout-grid {
             display: grid;
-            grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+            grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
             gap: 20px;
             align-items: start;
             transition: grid-template-columns 220ms ease, column-gap 220ms ease;
         }
 
         .layout-grid.terminal-layout {
-            grid-template-columns: minmax(120px, 160px) minmax(0, 1.8fr);
+            grid-template-columns: minmax(100px, 160px) minmax(0, 2.2fr);
             gap: 10px;
         }
 
