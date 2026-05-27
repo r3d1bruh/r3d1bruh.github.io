@@ -80,6 +80,63 @@
             .neofetch-cmd { margin-bottom: 10px; }
             .cmd-name { color: #42f15f; }
             .neofetch-prompt { margin-top: 10px; }
+            /* Dracula terminal theme (keeps original font-family) */
+            .terminal {
+                margin-top: 10px;
+                padding: 12px;
+                background: #282a36; /* dracula background */
+                border-radius: 6px;
+                border-top: 1px solid rgba(109,114,170,0.12);
+                box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+                height: 360px;
+                overflow-y: auto;
+            }
+            .terminal-output {
+                margin-bottom: 8px;
+                color: #f8f8f2; /* foreground */
+                padding: 6px 4px;
+                background: transparent;
+            }
+            .terminal-line {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                white-space: pre;
+                color: #f8f8f2;
+            }
+            .terminal-prompt { color: #bd93f9; /* purple */ font-weight:600; }
+            .terminal-input {
+                flex: 1 1 auto;
+                background: transparent;
+                border: 0;
+                outline: none;
+                color: #f8f8f2;
+                font: inherit;
+                line-height: 1.2;
+                caret-color: #50fa7b; /* green */
+            }
+            .terminal-output .line {
+                white-space: pre-wrap;
+            }
+            .terminal-muted { color: #6272a4; /* comment color */ }
+            .terminal ::selection, .terminal ::-moz-selection { background: #44475a; color: #f8f8f2; }
+            .terminal::-webkit-scrollbar { width: 10px; }
+            .terminal::-webkit-scrollbar-track { background: #1e1f29; }
+            .terminal::-webkit-scrollbar-thumb { background: #44475a; border-radius: 8px; border: 2px solid #1e1f29; }
+            .terminal { scrollbar-color: #44475a #1e1f29; scrollbar-width: thin; }
+
+            body::-webkit-scrollbar { width: 10px; }
+            body::-webkit-scrollbar-track { background: #1e1f29; }
+            body::-webkit-scrollbar-thumb { background: #44475a; border-radius: 8px; border: 2px solid #1e1f29; }
+            body { scrollbar-color: #44475a #1e1f29; scrollbar-width: thin; }
+            .terminal-neofetch {
+                margin: 6px 0 10px;
+                padding: 8px;
+                border-radius: 6px;
+                background: rgba(68, 71, 90, 0.25);
+                color: #f8f8f2;
+                font: inherit;
+            }
             .neofetch-grid {
                 display: grid;
                 grid-template-columns: minmax(250px, 0.95fr) minmax(0, 1.25fr);
@@ -128,6 +185,31 @@
             .neofetch-palette .topgap { margin-top: 0; }
             .blue { color: #4da7ff; }
             .gray { color: #d7d7d7; }
+            /* Dracula variant for neofetch pane */
+            .neofetch.dracula {
+                background: #282a36 !important;
+                color: #f8f8f2 !important;
+                border-radius: 6px !important;
+                padding: 12px !important;
+            }
+            .neofetch.dracula .neofetch-logo { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-title { color: #ff79c6 !important; }
+            .neofetch.dracula .neofetch-label { color: #8be9fd !important; }
+            .neofetch.dracula .neofetch-value { color: #f8f8f2 !important; }
+            .neofetch.dracula .neofetch-divider { color: #6272a4 !important; }
+            .neofetch.dracula .neofetch-bar span { background: #50fa7b !important; }
+            .neofetch.dracula .neofetch-palette span { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12) !important; }
+            /* Match terminal colors for commands and prompt */
+            .neofetch.dracula .neofetch-cmd,
+            .neofetch.dracula .neofetch-prompt { color: #f8f8f2 !important; }
+            .neofetch.dracula .neofetch-cmd span:first-child { color: #bd93f9 !important; font-weight:600 !important; }
+            .neofetch.dracula .neofetch-cmd .cmd-name { color: #50fa7b !important; font-weight:700 !important; }
+            .neofetch.dracula pre.neofetch-logo { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-logo span { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-logo * { color: #bd93f9 !important; }
+            #pc-specs.neofetch.dracula,
+            #pc-specs.neofetch.dracula .neofetch-shell,
+            #pc-specs.neofetch.dracula .neofetch-grid { background: #282a36 !important; }
             @media (max-width: 760px) {
                 .neofetch-grid { grid-template-columns: 1fr; }
                 .neofetch-logo { font-size: 13px; }
@@ -153,6 +235,16 @@
         .footer { margin-top:20px; text-align:center; font-size:.7rem; border-top:1px solid #444; padding-top:10px; }
         .hit-counter { background:transparent; color:#ffb7ff; padding:2px 6px; border:1px solid rgba(255,183,255,0.12); font-family:'Digital-7',monospace; font-size:1.1rem; }
         .blink{ animation: blinker 1s linear infinite; } @keyframes blinker{50%{opacity:0}}
+
+        /* Site-wide Dracula overrides (force consistent Dracula theme across whole site) */
+        :root { --dr-bg: #282a36; --dr-panel: #282a36; --dr-text: #f8f8f2; --dr-accent: #bd93f9; --dr-link: #8be9fd; --dr-green: #50fa7b; --dr-muted: #6272a4; }
+        body, .geocities-container { background: var(--dr-bg) !important; color: var(--dr-text) !important; }
+        .geocities-container { border-color: rgba(189,147,249,0.08) !important; box-shadow: none !important; }
+        .sidebar, .content-area { background: transparent !important; border-color: rgba(98,114,164,0.06) !important; }
+        .sidebar-nav button { color: var(--dr-link) !important; border-color: rgba(189,147,249,0.06) !important; }
+        a { color: var(--dr-link) !important; }
+        .section-title { color: var(--dr-accent) !important; }
+        .footer { color: var(--dr-text) !important; border-top-color: rgba(98,114,164,0.06) !important; }
 
         /* Avatar frame: strong slow glowing blink */
         .avatar-frame {
@@ -185,7 +277,12 @@
             mix-blend-mode: color;
             opacity: 0.95;
         }
+
+        /* Remove filter for the GitHub retro button specifically */
+        .gif-wrap img.retro-button[alt="GitHub"] { filter: none !important; transition: none !important; }
+        .gif-wrap:hover img.retro-button[alt="GitHub"] { filter: none !important; }
     </style>
+    <link rel="stylesheet" href="./terminal.css">
 </head>
 <body>
 <div class="geocities-container">
@@ -221,46 +318,15 @@
                 </div>
             </div>
 
-            <div id="pc-specs" class="pane neofetch" style="display:none;">
-                <div class="neofetch-shell">
-                    <div class="neofetch-cmd"><span>C:\Users\Krane&gt;</span> <span class="cmd-name">neofetch</span></div>
-                    <div class="neofetch-grid">
-                        <pre class="neofetch-logo"><span class="logo-red">        ,.=:!!t3Z3z.,</span>
-<span class="logo-red">       :tt:::tt333EE3</span>
-<span class="logo-red">       Et:::ztt33EEEL @Ee.,      ..,</span>
-<span class="logo-red">      ;tt:::tt333EE7 ;EEEEEEttttt33#</span>
-<span class="logo-green">     :Et:::zt333EEQ. $EEEEEttttt33QL</span>
-<span class="logo-green">     it::::tt333EEF @EEEEEEttttt33F</span>
-<span class="logo-green">    ;3=*^```"*4EEV :EEEEEEttttt33@.</span>
-<span class="logo-green">    ,.=::::!t=., ` @EEEEEEtttz33QF</span>
-<span class="logo-blue">   ;::::::::zt33)   "4EEEtttji3P*</span>
-<span class="logo-blue">  :t::::::::tt33.:Z3z..  `` ,..g.</span>
-<span class="logo-blue">  i::::::::zt33F AEEEtttt::::ztF</span>
-<span class="logo-blue"> ;:::::::::t33V ;EEEttttt::::t3</span>
-<span class="logo-yellow"> E::::::::zt33L @EEEtttt::::z3F</span>
-<span class="logo-yellow">{3=*^```"*4E3) ;EEEtttt:::::tZ`</span>
-<span class="logo-yellow">             ` :EEEEtttt::::z7</span>
-<span class="logo-gray">                 "VEzjt:;;z>*`</span></pre>
-                        <div class="neofetch-info">
-                            <div class="neofetch-title">Krane@DESKTOP-I83AHIP</div>
-                            <div class="neofetch-divider">--------------</div>
-                            <div class="neofetch-row"><span class="neofetch-label">OS:</span><span class="neofetch-value">Windows 11</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Build:</span><span class="neofetch-value">25H2 (26200)</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Uptime:</span><span class="neofetch-value">2 days, 23 hours, 5 minutes</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Resolution:</span><span class="neofetch-value">1920x1080 @60Hz</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Terminal:</span><span class="neofetch-value">Administrator: Command Prompt - neofetch</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">CPU:</span><span class="neofetch-value">Intel(R) Core(TM) i7-10610U CPU @ 1.80GHz</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">GPU:</span><span class="neofetch-value">Intel(R) UHD Graphics</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Memory:</span><span class="neofetch-value">11203 MB / 16102 MB (69% in use)</span></div>
-                            <div class="neofetch-row"><span class="neofetch-label">Disk:</span><span class="neofetch-value">C:\ 385.02 GB (19.34 GB free)</span></div>
+            <div id="pc-specs" class="pane" style="display:none;">
+                <div class="terminal-wrapper" id="terminal-wrapper">
+                    <div class="terminal" id="terminal">
+                        <div id="terminal-output" class="terminal-output"></div>
+                        <div class="terminal-line">
+                            <span id="terminal-prompt" class="terminal-prompt"></span>
+                            <input id="terminal-input" class="terminal-input" type="text" autocomplete="off" spellcheck="false" />
                         </div>
                     </div>
-                    <div class="neofetch-bars">
-                        <div class="neofetch-bar-row"><span class="neofetch-bar-label">Mem%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
-                        <div class="neofetch-bar-row"><span class="neofetch-bar-label">Disk%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
-                        <div class="neofetch-palette"><span style="background:#9b9b9b"></span><span style="background:#0b54f4"></span><span style="background:#20b10d"></span><span style="background:#4da7ff"></span><span style="background:#d71b2a"></span><span style="background:#b315b3"></span><span style="background:#c8a000"></span><span style="background:#dadada"></span></div>
-                    </div>
-                    <div class="neofetch-prompt">PS C:\Users\Krane\Desktop&gt;</div>
                 </div>
             </div>
             
@@ -269,35 +335,7 @@
     <div class="footer">VISITOR COUNT: <span class="hit-counter">001337</span><br><p>&copy; 1998-2024 r3d1bruh . ALL RIGHTS RESERVED . STAY RAD</p></div>
 </div>
     </body>
-    <script>
-    document.addEventListener('DOMContentLoaded', function(){
-        const navLink = document.getElementById('nav-link-exchange');
-        const navPC = document.getElementById('nav-pc-specs');
-        const content = document.querySelector('.content-area');
-        const layout = document.querySelector('.layout-grid');
-        const paneLink = document.getElementById('link-exchange');
-        const panePC = document.getElementById('pc-specs');
-        function setActive(b){ [navLink,navPC].forEach(x=> x && x.classList.remove('active')); if (b) b.classList.add('active'); }
-        function showPane(pane){
-            if (pane === 'link'){
-                paneLink && (paneLink.style.display = 'block');
-                panePC && (panePC.style.display = 'none');
-                content && content.classList.remove('terminal-mode');
-                layout && layout.classList.remove('terminal-layout');
-                setActive(navLink);
-            } else {
-                paneLink && (paneLink.style.display = 'none');
-                panePC && (panePC.style.display = 'block');
-                content && content.classList.add('terminal-mode');
-                layout && layout.classList.add('terminal-layout');
-                setActive(navPC);
-            }
-        }
-        if (navLink) navLink.addEventListener('click', ()=>{ showPane('link'); paneLink && paneLink.scrollIntoView({behavior:'smooth', block:'center'}); });
-        if (navPC) navPC.addEventListener('click', ()=>{ showPane('pc'); panePC && panePC.scrollIntoView({behavior:'smooth', block:'center'}); });
-        showPane('link');
-    });
-    </script>
+    <script src="./terminal.js" defer></script>
     <script>
     (async function(){
         const el = document.querySelector('.hit-counter');

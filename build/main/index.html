@@ -166,6 +166,63 @@
             .neofetch-cmd { margin-bottom: 10px; }
             .cmd-name { color: #42f15f; }
             .neofetch-prompt { margin-top: 10px; }
+            /* Dracula terminal theme (keeps original font-family) */
+            .terminal {
+                margin-top: 10px;
+                padding: 12px;
+                background: #282a36; /* dracula background */
+                border-radius: 6px;
+                border-top: 1px solid rgba(109,114,170,0.12);
+                box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+                height: 360px;
+                overflow-y: auto;
+            }
+            .terminal-output {
+                margin-bottom: 8px;
+                color: #f8f8f2; /* foreground */
+                padding: 6px 4px;
+                background: transparent;
+            }
+            .terminal-line {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                white-space: pre;
+                color: #f8f8f2;
+            }
+            .terminal-prompt { color: #bd93f9; /* purple */ font-weight:600; }
+            .terminal-input {
+                flex: 1 1 auto;
+                background: transparent;
+                border: 0;
+                outline: none;
+                color: #f8f8f2;
+                font: inherit;
+                line-height: 1.2;
+                caret-color: #50fa7b; /* green */
+            }
+            .terminal-output .line {
+                white-space: pre-wrap;
+            }
+            .terminal-muted { color: #6272a4; /* comment color */ }
+            .terminal ::selection, .terminal ::-moz-selection { background: #44475a; color: #f8f8f2; }
+            .terminal::-webkit-scrollbar { width: 10px; }
+            .terminal::-webkit-scrollbar-track { background: #1e1f29; }
+            .terminal::-webkit-scrollbar-thumb { background: #44475a; border-radius: 8px; border: 2px solid #1e1f29; }
+            .terminal { scrollbar-color: #44475a #1e1f29; scrollbar-width: thin; }
+
+            body::-webkit-scrollbar { width: 10px; }
+            body::-webkit-scrollbar-track { background: #1e1f29; }
+            body::-webkit-scrollbar-thumb { background: #44475a; border-radius: 8px; border: 2px solid #1e1f29; }
+            body { scrollbar-color: #44475a #1e1f29; scrollbar-width: thin; }
+            .terminal-neofetch {
+                margin: 6px 0 10px;
+                padding: 8px;
+                border-radius: 6px;
+                background: rgba(68, 71, 90, 0.25);
+                color: #f8f8f2;
+                font: inherit;
+            }
             .neofetch-grid {
                 display: grid;
                 grid-template-columns: minmax(250px, 0.95fr) minmax(0, 1.25fr);
@@ -214,6 +271,31 @@
             .neofetch-palette .topgap { margin-top: 0; }
             .blue { color: #4da7ff; }
             .gray { color: #d7d7d7; }
+            /* Dracula variant for neofetch pane */
+            .neofetch.dracula {
+                background: #282a36 !important;
+                color: #f8f8f2 !important;
+                border-radius: 6px !important;
+                padding: 12px !important;
+            }
+            .neofetch.dracula .neofetch-logo { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-title { color: #ff79c6 !important; }
+            .neofetch.dracula .neofetch-label { color: #8be9fd !important; }
+            .neofetch.dracula .neofetch-value { color: #f8f8f2 !important; }
+            .neofetch.dracula .neofetch-divider { color: #6272a4 !important; }
+            .neofetch.dracula .neofetch-bar span { background: #50fa7b !important; }
+            .neofetch.dracula .neofetch-palette span { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12) !important; }
+            /* Match terminal colors for commands and prompt */
+            .neofetch.dracula .neofetch-cmd,
+            .neofetch.dracula .neofetch-prompt { color: #f8f8f2 !important; }
+            .neofetch.dracula .neofetch-cmd span:first-child { color: #bd93f9 !important; font-weight:600 !important; }
+            .neofetch.dracula .neofetch-cmd .cmd-name { color: #50fa7b !important; font-weight:700 !important; }
+            .neofetch.dracula pre.neofetch-logo { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-logo span { color: #bd93f9 !important; }
+            .neofetch.dracula .neofetch-logo * { color: #bd93f9 !important; }
+            #pc-specs.neofetch.dracula,
+            #pc-specs.neofetch.dracula .neofetch-shell,
+            #pc-specs.neofetch.dracula .neofetch-grid { background: #282a36 !important; }
             @media (max-width: 760px) {
                 .neofetch-grid { grid-template-columns: 1fr; }
                 .neofetch-logo { font-size: 13px; }
@@ -299,6 +381,20 @@
             mix-blend-mode: color;
             opacity: 0.95;
         }
+
+        /* Remove filter for the GitHub retro button specifically */
+        .gif-wrap img.retro-button[alt="GitHub"] { filter: none !important; transition: none !important; }
+        .gif-wrap:hover img.retro-button[alt="GitHub"] { filter: none !important; }
+        
+        /* Site-wide Dracula overrides (force consistent Dracula theme across whole site) */
+        :root { --dr-bg: #282a36; --dr-panel: #282a36; --dr-text: #f8f8f2; --dr-accent: #bd93f9; --dr-link: #8be9fd; --dr-green: #50fa7b; --dr-muted: #6272a4; }
+        body, .geocities-container { background: var(--dr-bg) !important; color: var(--dr-text) !important; }
+        .geocities-container { border-color: rgba(189,147,249,0.08) !important; box-shadow: none !important; }
+        .sidebar, .content-area { background: transparent !important; border-color: rgba(98,114,164,0.06) !important; }
+        .sidebar-nav button { color: var(--dr-link) !important; border-color: rgba(189,147,249,0.06) !important; }
+        a { color: var(--dr-link) !important; }
+        .section-title { color: var(--dr-accent) !important; }
+        .footer { color: var(--dr-text) !important; border-top-color: rgba(98,114,164,0.06) !important; }
         details { background: rgba(15,6,20,0.35); border: 1px solid rgba(205,166,255,0.08); padding: 8px; border-radius: 6px; margin: 8px 0; }
         summary { cursor: pointer; font-weight: 700; color: var(--link-color); list-style: none; }
         .neofetch { background: #0a0410; color: #e6d7ff; padding: 10px; border-radius: 4px; font-family: 'Courier New', monospace; font-size:0.85rem; }
@@ -389,6 +485,7 @@
 
             <div id="pc-specs" class="pane neofetch" style="display:none;">
                 <div class="neofetch-shell">
+                    <div id="neofetch-output">
                     <div class="neofetch-cmd"><span>C:\Users\Krane&gt;</span> <span class="cmd-name">neofetch</span></div>
                     <div class="neofetch-grid">
                         <pre class="neofetch-logo"><span class="logo-red">        ,.=:!!t3Z3z.,</span>
@@ -426,7 +523,15 @@
                         <div class="neofetch-bar-row"><span class="neofetch-bar-label">Disk%:</span><div class="neofetch-bar"><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#c000c0"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span><span style="background:#d7d7d7"></span></div></div>
                         <div class="neofetch-palette"><span style="background:#9b9b9b"></span><span style="background:#0b54f4"></span><span style="background:#20b10d"></span><span style="background:#4da7ff"></span><span style="background:#d71b2a"></span><span style="background:#b315b3"></span><span style="background:#c8a000"></span><span style="background:#dadada"></span></div>
                     </div>
-                    <div class="neofetch-prompt">PS C:\Users\Krane\Desktop&gt;</div>
+                    <!-- neofetch prompt removed -->
+                    </div>
+                    <div class="terminal" id="terminal">
+                        <div id="terminal-output" class="terminal-output"></div>
+                        <div class="terminal-line">
+                            <span id="terminal-prompt" class="terminal-prompt">C:\Users\Krane&gt;</span>
+                            <input id="terminal-input" class="terminal-input" type="text" autocomplete="off" spellcheck="false" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -449,6 +554,162 @@
         const layout = document.querySelector('.layout-grid');
         const paneLink = document.getElementById('link-exchange');
         const panePC = document.getElementById('pc-specs');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalPrompt = document.getElementById('terminal-prompt');
+        const neofetchOutput = document.getElementById('neofetch-output');
+        const terminalBtn = document.getElementById('nav-pc-specs');
+        const vfs = {
+            '/': { type: 'dir', children: {
+                'main': { type: 'dir' },
+                'xp': { type: 'dir' },
+                'dora': { type: 'dir' },
+                'demo': { type: 'dir' },
+                'build': { type: 'dir' },
+                'public': { type: 'dir' },
+                'src': { type: 'dir' },
+                'l': { type: 'dir' },
+                'Google.html': { type: 'file' },
+                'README.md': { type: 'file' },
+                'LICENSE': { type: 'file' },
+                'package.json': { type: 'file' },
+                'now.json': { type: 'file' },
+            }} ,
+            '/main': { type: 'dir', children: { 'index.html': { type: 'file' } } },
+            '/xp': { type: 'dir', children: { 'index.html': { type: 'file' } } },
+            '/dora': { type: 'dir', children: { 'index.html': { type: 'file' }, 'app.html': { type: 'file' }, 'doraverse.html': { type: 'file' }, 'anushkaverse.html': { type: 'file' } } },
+            '/demo': { type: 'dir', children: { 'demo.gif': { type: 'file' } } },
+            '/build': { type: 'dir', children: { 'index.html': { type: 'file' }, 'main': { type: 'dir' }, 'xp': { type: 'dir' } } },
+            '/public': { type: 'dir', children: { 'main': { type: 'dir' } } },
+        };
+        let cwd = '/';
+
+        const cmdHistory = [];
+        let historyIndex = -1;
+        const builtInCommands = ['cls','dir','cd','start','neofetch'];
+
+        function tryAutocomplete(input) {
+            const trimmed = input.trim();
+            const node = getNode(cwd) || { children: {} };
+            const rootChildren = Object.keys(vfs['/'] && vfs['/'].children ? vfs['/'].children : {});
+            const candidates = Array.from(new Set([].concat(builtInCommands, Object.keys(node.children || {}), rootChildren)));
+            if (!trimmed) return candidates;
+            return candidates.filter(c => c.toLowerCase().startsWith(trimmed.toLowerCase()));
+        }
+        function normalizePath(path) {
+            if (!path) return cwd;
+            if (path.startsWith('/')) return path.replace(/\/+$/,'') || '/';
+            if (path === '..') {
+                if (cwd === '/') return '/';
+                return cwd.split('/').slice(0, -1).join('/') || '/';
+            }
+            if (path === '.') return cwd;
+            return (cwd === '/' ? '' : cwd) + '/' + path;
+        }
+
+        function getNode(path) {
+            return vfs[path] || null;
+        }
+
+        function setPrompt() {
+            const suffix = cwd === '/' ? '' : cwd.replace(/\//g, '\\');
+            terminalPrompt && (terminalPrompt.textContent = `C:\\Users\\Krane${suffix}>`);
+        }
+
+        function appendLine(text, className) {
+            if (!terminalOutput) return;
+            const line = document.createElement('div');
+            line.className = 'line' + (className ? ' ' + className : '');
+            line.textContent = text;
+            terminalOutput.appendChild(line);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        function appendNeofetchBlock() {
+            if (!terminalOutput || !neofetchOutput) return;
+            const block = document.createElement('div');
+            block.className = 'terminal-neofetch';
+            block.innerHTML = neofetchOutput.innerHTML;
+            terminalOutput.appendChild(block);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        function runCommand(raw) {
+            const input = raw.trim();
+            if (!terminalOutput) return;
+            const parts = input ? input.split(/\s+/) : [];
+            const cmd = parts[0] ? parts[0].toLowerCase() : '';
+            const arg = parts.slice(1).join(' ');
+            if (!input) { appendLine(`${terminalPrompt.textContent} ${raw}`); return; }
+            if (cmd !== 'neofetch') appendLine(`${terminalPrompt.textContent} ${raw}`);
+
+            if (cmd === 'cls') {
+                terminalOutput.textContent = '';
+                if (neofetchOutput) neofetchOutput.style.display = 'none';
+                if (panePC) panePC.classList.remove('dracula');
+                if (terminalBtn) terminalBtn.textContent = 'Terminal';
+                return;
+            }
+
+            if (cmd === 'neofetch') {
+                if (neofetchOutput) neofetchOutput.style.display = 'none';
+                if (panePC) panePC.classList.add('dracula');
+                appendNeofetchBlock();
+                return;
+            }
+
+            if (cmd === 'dir') {
+                const node = getNode(cwd);
+                if (!node || node.type !== 'dir') {
+                    appendLine('File not found', 'terminal-muted');
+                    return;
+                }
+                const names = Object.keys(node.children || {});
+                appendLine(names.join('  ') || '(empty)', 'terminal-muted');
+                return;
+            }
+
+            if (cmd === 'cd') {
+                if (!arg) {
+                    appendLine(cwd, 'terminal-muted');
+                    return;
+                }
+                const next = normalizePath(arg);
+                const node = getNode(next);
+                if (!node || node.type !== 'dir') {
+                    appendLine('The system cannot find the path specified.', 'terminal-muted');
+                    return;
+                }
+                cwd = next;
+                setPrompt();
+                return;
+            }
+
+            if (cmd === 'start') {
+                if (!arg) {
+                    appendLine('Usage: start <path>', 'terminal-muted');
+                    return;
+                }
+                if (/^https?:\/\//i.test(arg)) {
+                    window.open(arg, '_blank', 'noopener');
+                    return;
+                }
+                const target = normalizePath(arg);
+                const node = getNode(target);
+                if (node && node.type === 'dir') {
+                    window.open(`${target}/index.html`, '_blank', 'noopener');
+                    return;
+                }
+                if (node && node.type === 'file') {
+                    window.open(target, '_blank', 'noopener');
+                    return;
+                }
+                window.open(`${target}`, '_blank', 'noopener');
+                return;
+            }
+
+            appendLine(`'${cmd}' is not recognized as an internal or external command.`, 'terminal-muted');
+        }
         function setActive(b){ [navLink,navPC].forEach(x=> x && x.classList.remove('active')); if (b) b.classList.add('active'); }
         function showPane(pane){
             if (pane === 'link'){
@@ -466,7 +727,49 @@
             }
         }
         if (navLink) navLink.addEventListener('click', ()=>{ showPane('link'); paneLink && paneLink.scrollIntoView({behavior:'smooth', block:'center'}); });
-        if (navPC) navPC.addEventListener('click', ()=>{ showPane('pc'); panePC && panePC.scrollIntoView({behavior:'smooth', block:'center'}); });
+        if (navPC) navPC.addEventListener('click', ()=>{ 
+            showPane('pc');
+            panePC && panePC.scrollIntoView({behavior:'smooth', block:'center'});
+            if (terminalInput) terminalInput.focus();
+            try { if (typeof runCommand === 'function') { cmdHistory.push('neofetch'); historyIndex = cmdHistory.length; runCommand('neofetch'); } } catch (err) { console.warn('neofetch click failed', err); }
+        });
+        if (terminalInput) {
+            terminalInput.addEventListener('keydown', (e)=>{
+                if (e.key === 'Enter') {
+                    const value = terminalInput.value;
+                    terminalInput.value = '';
+                    if (value.trim()) { cmdHistory.push(value); historyIndex = cmdHistory.length; }
+                    runCommand(value);
+                    return;
+                }
+                if (e.key === 'ArrowUp') {
+                    if (cmdHistory.length === 0) return;
+                    if (historyIndex > 0) historyIndex--; else historyIndex = cmdHistory.length - 1;
+                    terminalInput.value = cmdHistory[historyIndex] || '';
+                    e.preventDefault();
+                    return;
+                }
+                if (e.key === 'ArrowDown') {
+                    if (cmdHistory.length === 0) return;
+                    if (historyIndex < cmdHistory.length - 1) historyIndex++; else { historyIndex = cmdHistory.length; terminalInput.value = ''; return; }
+                    terminalInput.value = cmdHistory[historyIndex] || '';
+                    e.preventDefault();
+                    return;
+                }
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const cur = terminalInput.value;
+                    const matches = tryAutocomplete(cur);
+                    if (matches.length === 1) {
+                        terminalInput.value = matches[0];
+                    } else if (matches.length > 1) {
+                        appendLine(matches.join('  '), 'terminal-muted');
+                    }
+                    return;
+                }
+            });
+        }
+        setPrompt();
         showPane('link');
     });
     </script>

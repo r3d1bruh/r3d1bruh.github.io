@@ -2,6 +2,22 @@
 
 🏁 Web based Windows XP desktop recreation.
 
+## Terminal
+
+The `main/` page includes a rebuilt terminal with these commands:
+
+- `cls`
+- `dir`
+- `cd`
+- `start`
+- `neofetch`
+- `theme default`
+- `layout compact|normal`
+- `promptgap <px>`
+- `help`
+
+The terminal also supports command history with Up/Down arrows, Tab autocomplete, and persistent history in `localStorage`.
+
 Features:
 
 - Drag and resize, minimize, maximize windows
