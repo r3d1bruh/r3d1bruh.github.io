@@ -10,8 +10,16 @@
   ],
   "routes": [
     {
+      "src": "/",
+      "dest": "/main/index.html"
+    },
+    {
       "src": "/l",
-      "dest": "/linktree/index.html"
+      "dest": "/main/index.html"
+    },
+    {
+      "src": "/xp",
+      "dest": "/xp/index.html"
     },
     {
       "src": "/static/(.*)",

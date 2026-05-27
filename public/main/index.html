@@ -450,5 +450,42 @@ document.addEventListener('DOMContentLoaded', function(){
     if (navPC) navPC.addEventListener('click', ()=>{ showPane('pc'); panePC && panePC.scrollIntoView({behavior:'smooth', block:'center'}); });
     showPane('link');
 });
+}</script>
+<script>
+(async function(){
+    const el = document.querySelector('.hit-counter');
+    if (!el) return;
+    const namespace = 'r3d1bruh.github.io';
+    const key = 'linktree';
+    const policy = 'permanent'; // 'permanent' or 'daily'
+    const markerKey = `visited:${namespace}:${key}`;
+    const visited = localStorage.getItem(markerKey);
+    const today = new Date().toISOString().slice(0,10);
+    const shouldIncrement = policy === 'permanent' ? !visited : visited !== today;
+    const isProd = location.hostname === 'r3d1bruh.github.io' || location.hostname.endsWith('github.io');
+
+    try {
+        if (!isProd) {
+            // don't increment during local dev; just fetch current value
+            const r = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+            const j = await r.json();
+            el.textContent = String(j.value || 0).padStart(6,'0');
+            return;
+        }
+
+        if (shouldIncrement) {
+            const res = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+            if (!res.ok) throw new Error('CountAPI ' + res.status);
+            const json = await res.json();
+            el.textContent = String(json.value).padStart(6,'0');
+            localStorage.setItem(markerKey, policy === 'daily' ? today : '1');
+        } else {
+            const res = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+            if (!res.ok) throw new Error('CountAPI ' + res.status);
+            const json = await res.json();
+            el.textContent = String(json.value || 0).padStart(6,'0');
+        }
+    } catch (err) { console.warn('CountAPI error', err); }
+})();
 </script>
 </html>
