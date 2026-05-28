@@ -289,13 +289,17 @@
     <marquee class="marquee-top">Which of the favours of your Lord will you deny? - None of Your favours do we deny, our Lord! All praise is due to You. - By time, indeed, mankind is in loss. - For you is your religion, and for me is my religion.</marquee>
     <div class="layout-grid">
         <div class="sidebar">
-            <div class="avatar-frame profile-pic"><img src="/public/main/pfp.webp" alt="r3d1bruh" style="width:100%;height:100%"></div>
+            <div class="avatar-frame profile-pic"><img src="./socials/pfp.webp" alt="r3d1bruh" style="width:100%;height:100%"></div>
             <div class="profile-name" style="font-weight:bold;color:#fff">r3d1bruh</div>
                         <div class="stats-box">
                             <div class="sidebar-nav" aria-label="page navigation">
                                 <button id="nav-link-exchange" class="active" aria-controls="link-exchange">Link Exchange</button>
                                 <button id="nav-pc-specs" aria-controls="pc-specs">Neofetch</button>
+                                <button id="nav-game-stats" aria-controls="video-game-stats">Video Game Stats</button>
                             </div>
+                                        <div class="sidebar-nav" aria-label="webpage navigation" id="webpages-list">
+                                            <!-- dynamically added webpage buttons appear here -->
+                                        </div>
                         </div>
             
         </div>
@@ -306,15 +310,15 @@
                 <div style="height:12px"></div>
 
                 <div class="banner-grid">
-                    <a class="gif-wrap" href="https://github.com/r3d1bruh" title="GitHub"><img src="/public/main/github.gif" class="retro-button" alt="GitHub"></a>
-                    <a class="gif-wrap" href="https://reddit.com/user/r3d1bruh" title="Reddit"><img src="/public/main/reddit.gif" class="retro-button" alt="Reddit"></a>
-                    <a class="gif-wrap" href="https://steamcommunity.com/id/r3d1bruh" title="Steam"><img src="/public/main/steam.gif" class="retro-button" alt="Steam"></a>
-                    <a class="gif-wrap" href="#" title="Discord"><img src="/public/main/discord.gif" class="retro-button" alt="Discord"></a>
-                    <a class="gif-wrap" href="https://instagram.com/r3d1bruh" title="Instagram"><img src="/public/main/insta.gif" class="retro-button" alt="Instagram"></a>
-                    <a class="gif-wrap" href="https://snapchat.com/add/r3d1bruh" title="Snapchat"><img src="/public/main/snapchat.gif" class="retro-button" alt="Snapchat"></a>
-                    <a class="gif-wrap" href="https://tiktok.com/@r3d1bruh" title="TikTok"><img src="/public/main/tiktok.gif" class="retro-button" alt="TikTok"></a>
-                    <a class="gif-wrap" href="https://twitter.com/r3d1bruh" title="X"><img src="/public/main/x.gif" class="retro-button" alt="X"></a>
-                    <a class="gif-wrap" href="https://linkedin.com/in/r3d1bruh" title="LinkedIn"><img src="/public/main/linkedin.gif" class="retro-button" alt="LinkedIn"></a>
+                    <a class="gif-wrap" href="https://github.com/r3d1bruh" title="GitHub"><img src="./socials/github.gif" class="retro-button" alt="GitHub"></a>
+                    <a class="gif-wrap" href="https://reddit.com/user/r3d1bruh" title="Reddit"><img src="./socials/reddit.gif" class="retro-button" alt="Reddit"></a>
+                    <a class="gif-wrap" href="https://steamcommunity.com/id/r3d1bruh" title="Steam"><img src="./socials/steam.gif" class="retro-button" alt="Steam"></a>
+                    <a class="gif-wrap" href="#" title="Discord"><img src="./socials/discord.gif" class="retro-button" alt="Discord"></a>
+                    <a class="gif-wrap" href="https://instagram.com/r3d1bruh" title="Instagram"><img src="./socials/insta.gif" class="retro-button" alt="Instagram"></a>
+                    <a class="gif-wrap" href="https://snapchat.com/add/r3d1bruh" title="Snapchat"><img src="./socials/snapchat.gif" class="retro-button" alt="Snapchat"></a>
+                    <a class="gif-wrap" href="https://tiktok.com/@r3d1bruh" title="TikTok"><img src="./socials/tiktok.gif" class="retro-button" alt="TikTok"></a>
+                    <a class="gif-wrap" href="https://twitter.com/r3d1bruh" title="X"><img src="./socials/x.gif" class="retro-button" alt="X"></a>
+                    <a class="gif-wrap" href="https://linkedin.com/in/r3d1bruh" title="LinkedIn"><img src="./socials/linkedin.gif" class="retro-button" alt="LinkedIn"></a>
                 </div>
             </div>
 
@@ -327,6 +331,33 @@
                             <input id="terminal-input" class="terminal-input" type="text" autocomplete="off" spellcheck="false" />
                         </div>
                     </div>
+                </div>
+            </div>
+            <div id="video-game-stats" class="pane" style="display:none;">
+                <h2 class="section-title">VIDEO GAME STATS</h2>
+                <div id="steam-stats-panel" style="background:rgba(15,6,20,0.35);border:1px solid rgba(205,166,255,0.08);border-radius:6px;padding:12px;">
+                    <p style="margin-top:0;color:var(--dr-text)">Steam data loads from a secure serverless proxy so your API key stays private.</p>
+                    <div id="steam-stats-loading" style="color:var(--dr-link);font-weight:700">Waiting for data...</div>
+                    <pre id="steam-stats-output" style="white-space:pre-wrap;margin:10px 0 0;color:var(--dr-text)"></pre>
+                </div>
+            </div>
+            <div id="webpage-pane" class="pane" style="display:none;">
+                <div class="webpage-toolbar" aria-hidden="false">
+                    <button id="webpage-back" title="Close">✕</button>
+                    <div style="flex:1;display:flex;gap:8px;align-items:center;justify-content:center">
+                        <span id="webpage-title" style="font-weight:700;color:var(--dr-text)"></span>
+                    </div>
+                    <div>
+                        <button id="webpage-fullscreen" title="Toggle fullscreen">⤢</button>
+                    </div>
+                </div>
+                <div class="webpage-container">
+                    <div class="webpage-loader" id="webpage-loader" aria-hidden="true" style="display:none">
+                        <div class="webpage-loader-ring"></div>
+                        <div class="webpage-loader-text">Loading...</div>
+                    </div>
+                    <div class="unlock-overlay" id="unlock-overlay" aria-hidden="true" style="display:none"></div>
+                    <iframe id="webpage-iframe" class="webpage-iframe" sandbox="allow-same-origin allow-scripts allow-forms" src="about:blank"></iframe>
                 </div>
             </div>
             
