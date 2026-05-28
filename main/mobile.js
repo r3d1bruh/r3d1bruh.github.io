@@ -21,6 +21,16 @@
   }
   const dest = document.getElementById('mobile-socials');
 
+  const contentTitle = document.querySelector('.content-area > .section-title');
+  if (contentTitle && !document.getElementById('mobile-link-exchange-title')) {
+    contentTitle.id = 'mobile-link-exchange-title';
+    const sidebar = document.querySelector('.sidebar');
+    const profileName = sidebar ? sidebar.querySelector('.profile-name') : null;
+    if (profileName && profileName.parentNode) {
+      profileName.parentNode.insertBefore(contentTitle, dest);
+    }
+  }
+
   // For each anchor in bannerGrid, clone it into the mobile-socials container as a tile with a label
   bannerGrid.querySelectorAll('a').forEach(a => {
     const img = a.querySelector('img');

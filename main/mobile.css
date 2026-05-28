@@ -13,7 +13,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 12px !important;
+  align-items: center;
+  padding: 6px !important;
 }
 
 /* Avatar prominent and centered */
@@ -27,7 +28,9 @@
 /* Profile name centered below avatar */
 .profile-name {
   text-align: center !important;
-  margin-bottom: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 6px auto 4px auto !important;
   font-size: 1.05rem !important;
 }
 
@@ -51,54 +54,62 @@
 #mobile-socials {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
   align-items: stretch;
-  margin-top: 8px;
+  margin-top: 2px;
+  width: calc(100% - 8px);
 }
 
 /* The area where we will move the social tiles becomes flexible (website nav keeps separate) */
 #webpages-list {
-  /* keep reserved for website navigation buttons; we'll pin it to bottom */
   display: flex;
   gap: 8px;
   align-items: center;
   justify-content: center;
 }
 
-/* Social tile appearance: icon + label side-by-side */
+/* Social tile: span available width, keep icon left and label centered */
 .mobile-social-tile {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start; /* icons left-aligned */
-  gap: 8px;
+  display: block;
+  position: relative;
+  /* make tiles comfortably wide on mobile while still centered */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px 12px 64px; /* room for icon and label */
+  margin: 2px auto; /* tiny gaps between tiles */
   background: rgba(255,255,255,0.02);
-  padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.03);
-  transition: transform .12s ease, box-shadow .12s ease;
+  border: 1px solid rgba(255,255,255,0.04);
   text-decoration: none;
   color: inherit;
-  min-width: 120px;
+  min-height: 50px; /* touch-friendly height */
 }
 
-/* Icon in tile */
+/* Icon stays left inside tile */
 .mobile-social-tile img {
-  width: 36px;
-  height: 36px;
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
   object-fit: cover;
-  border-radius: 6px;
-  display: block;
-  flex: 0 0 auto;
+  border-radius: 8px;
 }
 
-/* Label (always visible) */
+/* Label centered relative to tile (tile fills available width) */
 .mobile-social-tile .label {
-  font-size: 0.85rem;
-  color: var(--dr-text, #f8f8f2);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  font-weight: 700;
   white-space: nowrap;
-  flex: 1 1 auto;
-  text-align: center; /* labels center-aligned */
+  text-align: center;
+  color: var(--dr-text, #f8f8f2);
+  padding: 0 8px;
 }
 
 /* Hover / focus */
@@ -111,24 +122,16 @@
 
 /* Pin the bottom navigation buttons to the bottom of the sidebar area */
 
-/* Pin the website navigation (webpages-list) to the bottom of the viewport */
-#webpages-list {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  background: rgba(40,40,48,0.85);
-  padding: 8px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
-  z-index: 1200;
-}
-
-/* Make room for the fixed bottom nav so it doesn't cover content */
-body, .geocities-container { padding-bottom: 96px !important; }
+/* Keep webpages-list in normal flow on mobile; do not fix or add page padding */
+#webpages-list { position: relative; }
 
 /* Make sure content-area banner-grid is hidden (we're showing socials in sidebar) */
 .banner-grid {
+  display: none !important;
+}
+
+/* Hide the desktop heading on mobile; JS will move it under the profile block */
+.content-area > .section-title {
   display: none !important;
 }
 
