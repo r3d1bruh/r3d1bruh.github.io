@@ -26,9 +26,99 @@
     contentTitle.id = 'mobile-link-exchange-title';
     const sidebar = document.querySelector('.sidebar');
     const profileName = sidebar ? sidebar.querySelector('.profile-name') : null;
+
+    contentTitle.innerHTML = '<span class="dropdown-triangle dropdown-triangle-left">▸</span><span class="dropdown-label">LINK EXCHANGE</span><span class="dropdown-triangle dropdown-triangle-right">▸</span>';
+
     if (profileName && profileName.parentNode) {
       profileName.parentNode.insertBefore(contentTitle, dest);
     }
+  }
+
+  const title = document.getElementById('mobile-link-exchange-title');
+  const originalNav = document.querySelector('.sidebar > .stats-box > .sidebar-nav:first-of-type');
+
+  function setLinkExchangeTitleLabel(label) {
+    if (!title) return;
+    const labelNode = title.querySelector('.dropdown-label');
+    if (labelNode) {
+      labelNode.textContent = label;
+    }
+  }
+
+  function setMobileSocialsVisible(visible) {
+    if (!dest) return;
+    dest.style.display = visible ? 'flex' : 'none';
+  }
+
+  if (title && originalNav && !document.getElementById('mobile-nav-dropdown')) {
+    originalNav.style.display = 'none';
+    setMobileSocialsVisible(true);
+
+    const dropdown = document.createElement('div');
+    dropdown.id = 'mobile-nav-dropdown';
+
+    const navClone = originalNav.cloneNode(true);
+    navClone.style.display = 'flex';
+
+    const navButtons = navClone.querySelectorAll('button');
+    navButtons.forEach((button) => {
+      if (button.id) {
+        button.dataset.paneTarget = button.id;
+        button.id = `mobile-${button.id}`;
+      }
+    });
+
+      function setMobileNavActive(paneTarget) {
+        const mobileBtns = document.querySelectorAll('#mobile-nav-dropdown .sidebar-nav button');
+        mobileBtns.forEach(b => {
+          if (b.dataset.paneTarget === paneTarget) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+      }
+
+    navButtons.forEach((button) => {
+      if (button.dataset.paneTarget === 'nav-pc-specs') {
+        button.textContent = 'PC CONFIG';
+      }
+    });
+
+    navButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (typeof window.showPane === 'function') {
+          if (button.dataset.paneTarget === 'nav-link-exchange') {
+            window.showPane('link');
+            setLinkExchangeTitleLabel('LINK EXCHANGE');
+            setMobileSocialsVisible(true);
+            setMobileNavActive(button.dataset.paneTarget);
+          } else if (button.dataset.paneTarget === 'nav-pc-specs') {
+            window.showPane('pc');
+            setLinkExchangeTitleLabel('PC CONFIG');
+            setMobileSocialsVisible(false);
+            if (typeof window.runNeofetchIfNeeded === 'function') {
+              window.runNeofetchIfNeeded();
+            }
+            setMobileNavActive(button.dataset.paneTarget);
+          } else if (button.dataset.paneTarget === 'nav-game-stats') {
+            window.showPane('game-stats');
+            setLinkExchangeTitleLabel('VIDEO GAME STATS');
+            setMobileSocialsVisible(false);
+            setMobileNavActive(button.dataset.paneTarget);
+          }
+        }
+
+        title.classList.remove('open');
+        dropdown.classList.remove('open');
+      });
+    });
+
+    dropdown.appendChild(navClone);
+
+    title.parentNode.insertBefore(dropdown, title.nextSibling);
+
+    title.addEventListener('click', () => {
+      const isOpen = title.classList.toggle('open');
+      dropdown.classList.toggle('open', isOpen);
+    });
   }
 
   // For each anchor in bannerGrid, clone it into the mobile-socials container as a tile with a label

@@ -60,6 +60,69 @@
   width: calc(100% - 8px);
 }
 
+/* Mobile dropdown header for link exchange + navigation */
+#mobile-link-exchange-title {
+  width: calc(100% - 8px);
+  margin: 0 auto 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--dr-accent, #bd93f9);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  user-select: none;
+}
+
+#mobile-link-exchange-title .dropdown-triangle {
+  display: inline-block;
+  transition: transform 160ms ease;
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+/* left chevron points right by default (▸), right chevron is reversed visually */
+#mobile-link-exchange-title .dropdown-triangle-left {
+  transform: none;
+}
+#mobile-link-exchange-title .dropdown-triangle-right {
+  transform: rotateY(180deg);
+}
+
+/* when open, rotate left chevron down and right chevron down the opposite way */
+#mobile-link-exchange-title.open .dropdown-triangle-left {
+  transform: rotate(90deg);
+}
+#mobile-link-exchange-title.open .dropdown-triangle-right {
+  transform: rotate(-90deg) rotateY(180deg);
+}
+
+#mobile-nav-dropdown {
+  width: calc(100% - 8px);
+  margin: 0 auto 0 auto;
+  display: none;
+}
+
+#mobile-nav-dropdown.open {
+  display: block;
+}
+
+#mobile-nav-dropdown .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 0;
+  align-items: center; /* center options */
+}
+
+/* make mobile dropdown buttons span full width but center the label */
+#mobile-nav-dropdown .sidebar-nav button {
+  width: 100%;
+  text-align: center;
+}
+
 /* The area where we will move the social tiles becomes flexible (website nav keeps separate) */
 #webpages-list {
   display: flex;
@@ -135,6 +198,11 @@
   display: none !important;
 }
 
+/* Hide the original navigation strip on mobile; a cloned dropdown is shown under the title */
+.sidebar > .stats-box > .sidebar-nav:first-of-type {
+  display: none !important;
+}
+
 /* Keep the profile name centered */
 .profile-name { text-align: center !important; }
 
@@ -150,9 +218,45 @@
   padding: 10px !important;
 }
 
+.content-area.terminal-mode {
+  padding-top: 0 !important;
+}
+
+.content-area.terminal-mode #pc-specs {
+  margin-top: -4px !important;
+}
+
 /* Terminal area lowered height for mobile */
 .terminal {
-  height: 280px !important;
+  height: 84vh !important;
+  min-height: 560px !important;
+}
+
+/* When terminal-layout is active (PC config open), collapse the sidebar below the dropdown title
+   to reduce empty space and better prioritize the terminal pane on mobile */
+.layout-grid.terminal-layout .sidebar {
+  padding: 0 6px 0 !important;
+}
+
+.layout-grid.terminal-layout .sidebar .avatar-frame {
+  width: 120px !important;
+  height: 120px !important;
+  margin-bottom: 2px !important;
+}
+
+.layout-grid.terminal-layout .sidebar .profile-name {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.layout-grid.terminal-layout #mobile-link-exchange-title {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.layout-grid.terminal-layout .sidebar #mobile-socials,
+.layout-grid.terminal-layout .sidebar .stats-box {
+  display: none !important;
 }
 
 /* Reduce marquee and footer sizes for small screens */

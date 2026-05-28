@@ -314,6 +314,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return !!(terminalOutput && terminalOutput.querySelector('.terminal-neofetch'));
         }
 
+        function runNeofetchIfNeeded() {
+            if (hasNeofetchRendered()) return;
+            pushHistory('neofetch');
+            runCommand('neofetch');
+        }
+
         // Simple man pages for built-in commands
         const manPages = {
             cls: 'Clear the terminal output. Usage: cls',
@@ -1081,9 +1087,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Only auto-run neofetch for user-initiated clicks to avoid programmatic spamming
                 showPane('pc');
                 if (panePC) panePC.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                if (e && e.isTrusted && !hasNeofetchRendered()) {
-                    pushHistory('neofetch');
-                    runCommand('neofetch');
+                if (e && e.isTrusted) {
+                    runNeofetchIfNeeded();
                 }
             });
         }
@@ -1511,6 +1516,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.runCommand = runCommand;
         window.showPane = showPane;
+        window.runNeofetchIfNeeded = runNeofetchIfNeeded;
     } catch (error) {
         console.error('terminal initialization failed', error);
     }
