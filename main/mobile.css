@@ -17,12 +17,29 @@
   padding: 6px !important;
 }
 
+.sidebar-brand {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  transition: max-height 220ms ease, margin 220ms ease, padding 220ms ease, opacity 220ms ease, transform 220ms ease;
+}
+
 /* Avatar prominent and centered */
 .avatar-frame {
   width: 140px !important;
   height: 140px !important;
   margin: 0 auto 10px auto !important;
   border-radius: 12px !important;
+}
+
+.marquee-top,
+.sidebar-brand,
+.avatar-frame,
+.profile-name {
+  transition: transform 220ms ease, opacity 220ms ease, max-height 220ms ease, margin 220ms ease, padding 220ms ease, width 220ms ease, height 220ms ease;
+  will-change: transform, opacity, max-height, margin, padding, width, height;
 }
 
 /* Profile name centered below avatar */
@@ -235,18 +252,9 @@
 /* When terminal-layout is active (PC config open), collapse the sidebar below the dropdown title
    to reduce empty space and better prioritize the terminal pane on mobile */
 .layout-grid.terminal-layout .sidebar {
+  align-self: start;
+  height: auto !important;
   padding: 0 6px 0 !important;
-}
-
-.layout-grid.terminal-layout .sidebar .avatar-frame {
-  width: 120px !important;
-  height: 120px !important;
-  margin-bottom: 2px !important;
-}
-
-.layout-grid.terminal-layout .sidebar .profile-name {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
 }
 
 .layout-grid.terminal-layout #mobile-link-exchange-title {
@@ -257,6 +265,64 @@
 .layout-grid.terminal-layout .sidebar #mobile-socials,
 .layout-grid.terminal-layout .sidebar .stats-box {
   display: none !important;
+}
+
+.layout-grid.terminal-layout .sidebar .stats-box {
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.mobile-header-collapsed .marquee-top {
+  max-height: 0;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  opacity: 0;
+  transform: translateY(-16px);
+  overflow: hidden;
+}
+
+body.mobile-header-collapsed .sidebar .avatar-frame {
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-width: 0 !important;
+  opacity: 0;
+  transform: translateY(-16px) scale(0.92);
+  overflow: hidden;
+}
+
+body.mobile-header-collapsed .sidebar .sidebar-brand {
+  max-height: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0;
+  transform: translateY(-14px);
+}
+
+body.mobile-header-collapsed .sidebar .profile-name {
+  max-height: 0;
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  opacity: 0;
+  transform: translateY(-12px);
+  overflow: hidden;
+}
+
+body.mobile-header-collapsed .sidebar {
+  gap: 0;
+  align-self: start;
+  height: auto !important;
+  padding-top: 2px !important;
 }
 
 /* Reduce marquee and footer sizes for small screens */

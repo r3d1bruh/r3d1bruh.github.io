@@ -186,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             line.textContent = text;
             terminalOutput.appendChild(line);
             scrollTerminalToBottom();
-            focusInput();
         }
 
         function createCommandEntry(promptText, commandText) {
@@ -211,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!terminalOutput) return;
             terminalOutput.appendChild(createCommandEntry(getPromptText(), commandText));
             scrollTerminalToBottom();
-            focusInput();
         }
 
         function createNeofetchBlock() {
@@ -307,7 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!terminalOutput) return;
             terminalOutput.appendChild(createNeofetchBlock());
             scrollTerminalToBottom();
-            focusInput();
         }
 
         function hasNeofetchRendered() {
@@ -1030,6 +1027,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function showPane(pane) {
             const terminalWrapper = document.getElementById('terminal-wrapper');
+            const shouldCollapseMobileHeader = pane !== 'link';
+            if (document && document.body) {
+                document.body.classList.toggle('mobile-header-collapsed', shouldCollapseMobileHeader);
+            }
             if (pane === 'link') {
                 if (paneLink) paneLink.style.display = 'block';
                 if (panePC) panePC.style.display = 'none';
@@ -1078,7 +1079,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navLink) {
             navLink.addEventListener('click', () => {
                 showPane('link');
-                if (paneLink) paneLink.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         }
 
@@ -1086,7 +1086,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navPC.addEventListener('click', (e) => {
                 // Only auto-run neofetch for user-initiated clicks to avoid programmatic spamming
                 showPane('pc');
-                if (panePC) panePC.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 if (e && e.isTrusted) {
                     runNeofetchIfNeeded();
                 }
@@ -1096,7 +1095,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navGameStats) {
             navGameStats.addEventListener('click', () => {
                 showPane('game-stats');
-                if (paneGameStats) paneGameStats.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 loadSteamStats();
             });
         }

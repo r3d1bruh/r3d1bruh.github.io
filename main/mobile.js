@@ -10,11 +10,11 @@
   // create a mobile-only socials container below the profile name
   if (!document.getElementById('mobile-socials')) {
     const sidebar = document.querySelector('.sidebar');
-    const profileName = sidebar ? sidebar.querySelector('.profile-name') : null;
+    const sidebarBrand = sidebar ? sidebar.querySelector('.sidebar-brand') : null;
     const mobileSocials = document.createElement('div');
     mobileSocials.id = 'mobile-socials';
-    if (profileName && profileName.parentNode) {
-      profileName.parentNode.insertBefore(mobileSocials, profileName.nextSibling);
+    if (sidebarBrand && sidebarBrand.parentNode) {
+      sidebarBrand.parentNode.insertBefore(mobileSocials, sidebarBrand.nextSibling);
     } else if (sidebar) {
       sidebar.appendChild(mobileSocials);
     }
@@ -25,12 +25,12 @@
   if (contentTitle && !document.getElementById('mobile-link-exchange-title')) {
     contentTitle.id = 'mobile-link-exchange-title';
     const sidebar = document.querySelector('.sidebar');
-    const profileName = sidebar ? sidebar.querySelector('.profile-name') : null;
+    const sidebarBrand = sidebar ? sidebar.querySelector('.sidebar-brand') : null;
 
     contentTitle.innerHTML = '<span class="dropdown-triangle dropdown-triangle-left">▸</span><span class="dropdown-label">LINK EXCHANGE</span><span class="dropdown-triangle dropdown-triangle-right">▸</span>';
 
-    if (profileName && profileName.parentNode) {
-      profileName.parentNode.insertBefore(contentTitle, dest);
+    if (sidebarBrand && sidebarBrand.parentNode) {
+      sidebarBrand.parentNode.insertBefore(contentTitle, dest);
     }
   }
 
@@ -50,9 +50,14 @@
     dest.style.display = visible ? 'flex' : 'none';
   }
 
+  function setMobileHeaderCollapsed(collapsed) {
+    document.body.classList.toggle('mobile-header-collapsed', collapsed);
+  }
+
   if (title && originalNav && !document.getElementById('mobile-nav-dropdown')) {
     originalNav.style.display = 'none';
     setMobileSocialsVisible(true);
+    setMobileHeaderCollapsed(false);
 
     const dropdown = document.createElement('div');
     dropdown.id = 'mobile-nav-dropdown';
@@ -89,11 +94,13 @@
             window.showPane('link');
             setLinkExchangeTitleLabel('LINK EXCHANGE');
             setMobileSocialsVisible(true);
+            setMobileHeaderCollapsed(false);
             setMobileNavActive(button.dataset.paneTarget);
           } else if (button.dataset.paneTarget === 'nav-pc-specs') {
             window.showPane('pc');
             setLinkExchangeTitleLabel('PC CONFIG');
             setMobileSocialsVisible(false);
+            setMobileHeaderCollapsed(true);
             if (typeof window.runNeofetchIfNeeded === 'function') {
               window.runNeofetchIfNeeded();
             }
@@ -102,6 +109,7 @@
             window.showPane('game-stats');
             setLinkExchangeTitleLabel('VIDEO GAME STATS');
             setMobileSocialsVisible(false);
+            setMobileHeaderCollapsed(true);
             setMobileNavActive(button.dataset.paneTarget);
           }
         }
