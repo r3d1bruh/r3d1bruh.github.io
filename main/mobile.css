@@ -1,0 +1,157 @@
+/* mobile.css — loads only when viewport <= 760px */
+
+/* Mobile-first overrides that only apply when the file is loaded via media query */
+
+.layout-grid {
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+/* Sidebar becomes a vertical column and full-width */
+.sidebar {
+  width: 100% !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 12px !important;
+}
+
+/* Avatar prominent and centered */
+.avatar-frame {
+  width: 140px !important;
+  height: 140px !important;
+  margin: 0 auto 10px auto !important;
+  border-radius: 12px !important;
+}
+
+/* Profile name centered below avatar */
+.profile-name {
+  text-align: center !important;
+  margin-bottom: 8px !important;
+  font-size: 1.05rem !important;
+}
+
+/* Ensure the stats-box stretches and footer nav can be pinned */
+.stats-box {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px;
+  min-height: 88px;
+}
+
+/* Keep top navigation (page navigation) visible at top */
+.sidebar > .stats-box > .sidebar-nav:first-of-type {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+
+/* Mobile social container (inserted by mobile.js) */
+#mobile-socials {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+/* The area where we will move the social tiles becomes flexible (website nav keeps separate) */
+#webpages-list {
+  /* keep reserved for website navigation buttons; we'll pin it to bottom */
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Social tile appearance: icon + label side-by-side */
+.mobile-social-tile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start; /* icons left-aligned */
+  gap: 8px;
+  background: rgba(255,255,255,0.02);
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: transform .12s ease, box-shadow .12s ease;
+  text-decoration: none;
+  color: inherit;
+  min-width: 120px;
+}
+
+/* Icon in tile */
+.mobile-social-tile img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* Label (always visible) */
+.mobile-social-tile .label {
+  font-size: 0.85rem;
+  color: var(--dr-text, #f8f8f2);
+  white-space: nowrap;
+  flex: 1 1 auto;
+  text-align: center; /* labels center-aligned */
+}
+
+/* Hover / focus */
+.mobile-social-tile:focus,
+.mobile-social-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  outline: none;
+}
+
+/* Pin the bottom navigation buttons to the bottom of the sidebar area */
+
+/* Pin the website navigation (webpages-list) to the bottom of the viewport */
+#webpages-list {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(40,40,48,0.85);
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+
+/* Make room for the fixed bottom nav so it doesn't cover content */
+body, .geocities-container { padding-bottom: 96px !important; }
+
+/* Make sure content-area banner-grid is hidden (we're showing socials in sidebar) */
+.banner-grid {
+  display: none !important;
+}
+
+/* Keep the profile name centered */
+.profile-name { text-align: center !important; }
+
+/* Ensure avatar-frame is centered */
+.avatar-frame { margin-left: auto !important; margin-right: auto !important; }
+
+/* Disable Neofetch for mobile (hide button and pane) */
+#nav-pc-specs { display: none !important; }
+#pc-specs { display: none !important; }
+
+/* Slight spacing improvements for content area */
+.content-area {
+  padding: 10px !important;
+}
+
+/* Terminal area lowered height for mobile */
+.terminal {
+  height: 280px !important;
+}
+
+/* Reduce marquee and footer sizes for small screens */
+.marquee-top { font-size: 0.8rem !important; padding: 6px !important; }
+.footer { font-size: 0.7rem !important; padding-top: 8px !important; }
