@@ -47,7 +47,7 @@
 
   function setMobileSocialsVisible(visible) {
     if (!dest) return;
-    dest.style.display = visible ? 'flex' : 'none';
+    dest.classList.toggle('mobile-socials-hidden', !visible);
   }
 
   function setMobileHeaderCollapsed(collapsed) {
@@ -98,18 +98,18 @@
             setMobileNavActive(button.dataset.paneTarget);
           } else if (button.dataset.paneTarget === 'nav-pc-specs') {
             window.showPane('pc');
-            setLinkExchangeTitleLabel('PC CONFIG');
             setMobileSocialsVisible(false);
             setMobileHeaderCollapsed(true);
             if (typeof window.runNeofetchIfNeeded === 'function') {
               window.runNeofetchIfNeeded();
             }
+            setTimeout(() => setLinkExchangeTitleLabel('PC CONFIG'), 160);
             setMobileNavActive(button.dataset.paneTarget);
           } else if (button.dataset.paneTarget === 'nav-game-stats') {
             window.showPane('game-stats');
-            setLinkExchangeTitleLabel('VIDEO GAME STATS');
             setMobileSocialsVisible(false);
             setMobileHeaderCollapsed(true);
+            setTimeout(() => setLinkExchangeTitleLabel('VIDEO GAME STATS'), 160);
             setMobileNavActive(button.dataset.paneTarget);
           }
         }
